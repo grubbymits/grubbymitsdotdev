@@ -6,10 +6,11 @@ function PaperBear(x, y, width, height) {
   this.leftArmRotation = 0;
   this.leftLegRotation = 0;
   this.rightLegRotation = 0;
-  
 	var centre = new Point(x, y);
+	
+	// Create leg
 	var hipPoint = new Point(x, y + height / 4);
-	var legWidth = width / 4;
+	var legWidth = width / 3;
 	var legSize = new Size(legWidth, height / 3);
 	var legBegin = new Point(x - legWidth/2, y + height / 4);
 	
@@ -20,9 +21,10 @@ function PaperBear(x, y, width, height) {
 	leftLeg.smooth();
 	leftLeg.name = 'leftLeg';
 	leftLeg.rotate(10);
-	
+
+  // Create arms
 	var shoulderPoint = new Point(x, y - height / 4);
-	var armWidth = width / 4;
+	var armWidth = width / 3;
 	var armSize = new Size(armWidth, height / 2);
 	var armBegin = new Point(x - armWidth/2, y - height / 4);
 	
@@ -65,10 +67,25 @@ function PaperBear(x, y, width, height) {
 	ear.fillColor = fColor;
 	ear.strokeColor = sColor;
 	
-	//var noseCentre = new Point(headCentre.x - width)
+	var noseCentre = new Point(headCentre.x, headCentre.y - headRadius + headRadius/6);
+	var nose = new Path.RegularPolygon(noseCentre, 3, width/2);
+	nose.smooth();
+	nose.rotate(240, headCentre);
+	nose.fillColor = '#CC6600';
+	nose.strokeColor = sColor;
+	
+	var eyeCentre = new Point(headCentre.x, headCentre.y + width/6 - headRadius);
+	var eye = new Path.Circle(eyeCentre, width/6);
+	eye.fillColor = 'white';
+	eye.strokeColor = sColor;
+	eye.rotate(-70, headCentre);
+	var pupil = new Path.Circle(eyeCentre, width/12);
+	pupil.position.y += width/12 - width/6 ;
+	pupil.fillColor = 'black';
+	pupil.rotate(-75, headCentre);
 	
 	var completeHead = new Group({
-	  children: [head, ear]
+	  children: [head, ear, nose, eye, pupil]
 	});
 	
 	completeHead.name = 'completeHead';
@@ -85,7 +102,7 @@ function PaperBear(x, y, width, height) {
 PaperBear.prototype.animate = function(event) {
   var baseRotation = Math.cos(event.time);
   var clockwiseRotation = baseRotation * 0.1;
-  var anticlockwiseRotation = baseRotation * -0.1
+  var anticlockwiseRotation = baseRotation * -0.1;
   this.headRotation += clockwiseRotation;
   
   this.rightArmRotation -= -anticlockwiseRotation;
@@ -100,7 +117,7 @@ PaperBear.prototype.animate = function(event) {
 PaperBear.prototype.scale = function(sx, sy) {
   this.drawImg.remove();
   this.drawImg = this.origImg.clone();
-  this.drawImg.children.head.rotate(this.headRotation);
+  this.drawImg.children.completeHead.rotate(this.headRotation);
   this.drawImg.children.leftArm.rotate(this.leftArmRotation);
   this.drawImg.children.rightArm.rotate(this.rightArmRotation);
   this.drawImg.children.leftLeg.rotate(this.leftLegRotation);
