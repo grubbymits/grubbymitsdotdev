@@ -1,5 +1,5 @@
 function PaperBear(x, y, width, height) {
-  var fColor = '#8F2400';
+  var fColor = '#343439';
   var sColor = 'black';
   this.headRotation = 0;
   this.rightArmRotation = 0;
@@ -67,11 +67,19 @@ function PaperBear(x, y, width, height) {
 	ear.fillColor = fColor;
 	ear.strokeColor = sColor;
 	
-	var noseCentre = new Point(headCentre.x, headCentre.y - headRadius + headRadius/6);
-	var nose = new Path.RegularPolygon(noseCentre, 3, width/2);
+	var musselCentre = new Point(headCentre.x, headCentre.y - headRadius + headRadius/6);
+	var mussel = new Path.RegularPolygon(musselCentre, 3, width/2);
+	mussel.smooth();
+	mussel.rotate(240, headCentre);
+	mussel.fillColor = '#7A5C00';
+	mussel.strokeColor = sColor;
+	
+	var noseCentre = musselCentre;
+	noseCentre.y += (width/8  - width/2);
+	var nose = new Path.RegularPolygon(noseCentre, 3, width/8);
 	nose.smooth();
-	nose.rotate(240, headCentre);
-	nose.fillColor = '#CC6600';
+	nose.rotate(250, headCentre);
+	nose.fillColor = 'black';
 	nose.strokeColor = sColor;
 	
 	var eyeCentre = new Point(headCentre.x, headCentre.y + width/6 - headRadius);
@@ -85,7 +93,7 @@ function PaperBear(x, y, width, height) {
 	pupil.rotate(-75, headCentre);
 	
 	var completeHead = new Group({
-	  children: [head, ear, nose, eye, pupil]
+	  children: [head, ear, mussel, nose, eye, pupil]
 	});
 	
 	completeHead.name = 'completeHead';
