@@ -5,6 +5,7 @@
   <link rel='shortcut icon' type='image/x-icon' href='assets/images/favicon.ico'>
   <script type="text/javascript" src="js/paper-full.min.js"></script>
   <script type="text/javascript" src="js/paperbear.js"></script>
+  <script type="text/javascript" src="js/scene.js"></script>
   <script type="text/javascript">
     	paper.install(window);
     	window.onload = function() {
@@ -19,7 +20,14 @@
     	  // use view.pixelRatio to draw everything
     	  var bear = new PaperBear((canvas.width/6),
                                      (canvas.height / 3),
-                                     40, 90);
+                                     canvas.width/30, canvas.height/8);
+                                     
+        fallenLog.create(canvas.width/6, canvas.height / 3,
+                   canvas.width/6, canvas.heigth / 6);
+	      tree.create(4*canvas.width / 6,
+	                  canvas.height - canvas.height/3,
+	                  canvas.width/6,
+	                  canvas.height/2);
 
     	  view.onFrame = function(event) {
 	        bear.animate(event);
@@ -37,6 +45,7 @@
           var sx = canvas.width / origWidth;
           var sy = canvas.height / origHeight;
 	        bear.scale(sx, sy);
+	        tree.scale(sx, sy);
         }
 
         window.addEventListener('resize', resizeCanvas, false);

@@ -1,5 +1,5 @@
 function PaperBear(x, y, width, height) {
-  var fColor = '#343439';
+  var fColor = '#343434';
   var sColor = 'black';
   this.headRotation = 0;
   this.rightArmRotation = 0;
@@ -53,7 +53,7 @@ function PaperBear(x, y, width, height) {
 
   // Create head
 	var headCentre = new Point(x, y - height / 2);
-	var headRadius = 15 * height / width;
+	var headRadius =  width;
 	head = new Path.RegularPolygon(headCentre, 3, headRadius);
   head.name = 'head';
 	head.fillColor = fColor;
@@ -74,7 +74,7 @@ function PaperBear(x, y, width, height) {
 	mussel.fillColor = '#7A5C00';
 	mussel.strokeColor = sColor;
 	
-	var noseCentre = musselCentre;
+	var noseCentre = new Point(musselCentre);
 	noseCentre.y += (width/8  - width/2);
 	var nose = new Path.RegularPolygon(noseCentre, 3, width/8);
 	nose.smooth();
@@ -84,7 +84,7 @@ function PaperBear(x, y, width, height) {
 	
 	var eyeCentre = new Point(headCentre.x, headCentre.y + width/6 - headRadius);
 	var eye = new Path.Circle(eyeCentre, width/6);
-	eye.fillColor = 'white';
+	eye.fillColor = '#EBEBEB';
 	eye.strokeColor = sColor;
 	eye.rotate(-70, headCentre);
 	var pupil = new Path.Circle(eyeCentre, width/12);
