@@ -3,6 +3,7 @@ var grass = {};
 var rock = [];
 var trees = [];
 
+/*
 fallenLog.create = function(x, y, width, height) {
   console.log("creating fallenlog");
   var logBegin = new Point(x - width / 2, y - height / 2);
@@ -26,20 +27,22 @@ fallenLog.scale = function(sx, sy) {
   this.drawImg.visible = true;
   this.drawImg.position.x *= sx;
   this.drawImg.position.y *= sy;
+  this.drawImg.visible= true;
 };
+*/
 
-grass.create = function(canvasWidth, canvasHeight) {
-  this.origImg = new Path.Rectangle(new Point(0, canvasHeight/3),
+createGrass = function(canvasWidth, canvasHeight) {
+  grass.img = new Path.Rectangle(new Point(0, canvasHeight/3),
                              canvasWidth, 2*canvasHeight/3);
-  this.origImg.fillColor = '#405600';
+  grass.img.fillColor = '#405600';
+  grass.img.sendToBack();
 };
 
-grass.scale = function(canvasWidth, canvasHeight) {
-  this.drawImg.remove();
-  this.drawImg = this.origImg.clone();
-  this.drawImg.scale(sx*0.8, sy);
-  this.drawImg.visible = true;
-}
+createLog = function(canvasWidth, canvasHeight) {
+  fallenLog.img = new Path.Rectangle(new Point(0, canvasHeight/5),
+                                     canvasWidth / 3, canvasHeight / 5);
+  fallenLog.fillColor = 'blue';
+};
 
 createTrees = function(canvasWidth, canvasHeight) {
   var nearTree = new Tree(4*canvasWidth/6,

@@ -13,7 +13,7 @@
     	paper.install(window);
     	window.onload = function() {
     	  var canvas = document.getElementById('pCanvas');
-    	  canvas.width = window.innerWidth * 0.8;
+    	  canvas.width = window.innerWidth * 0.9;
     	  canvas.height = 9 * canvas.width / 16;
     	  var origWidth = canvas.width;
     	  var origHeight = canvas.height;
@@ -21,7 +21,8 @@
     	  var desiredHeight = 1080;
     	  paper.setup(canvas);
     	  
-    	  grass.create(canvas.width, canvas.height);
+    	  //grass.create(canvas.width, canvas.height);
+    	  createGrass(canvas.width, canvas.height);
     	  
     	  // use view.pixelRatio to draw everything
     	  var bear = new PaperBear(canvas.width/3,
@@ -29,8 +30,8 @@
                                  canvas.width/30,
                                  canvas.height/8);
                                      
-        fallenLog.create(canvas.width/6, canvas.height / 3,
-                   canvas.width/6, canvas.heigth / 6);
+        //fallenLog.create(canvas.width/6, canvas.height / 3,
+           //        canvas.width/6, canvas.heigth / 6);
                    
 	      createTrees(canvas.width, canvas.height);
 	                  
@@ -41,11 +42,11 @@
         var resizeCanvas = function() {
           var height = 9 * window.innerWidth / 16;
           if (height <= window.innerHeight) {
-            canvas.width = window.innerWidth;
+            canvas.width = window.innerWidth * 0.9;
             canvas.height = height;
           } else {
             canvas.height = window.innerHeight;
-            canvas.width = 16 * canvas.height / 9;
+            canvas.width = (16 * canvas.height / 9) * 0.9;
           }
           var sx = canvas.width / origWidth;
           var sy = canvas.height / origHeight;
@@ -60,13 +61,20 @@
 	    }
     </script>
   <style>
-    body {
-      margin: auto;
-      margin-right:10%;
-      margin-left:10%;
-      text-align:center;
-      width: 80%;
+    html {
+      height: 100%;
       background-color: #E6E6E6;
+    }
+    body {
+      position: absolute;
+      top: 0;
+      margin: auto;
+      margin-right:5%;
+      margin-left:5%;
+      text-align:center;
+      width: 90%;
+      height: 100%;
+      background-color: #94DBFF;
     }
     h1 {
       color : #6B8F00;
