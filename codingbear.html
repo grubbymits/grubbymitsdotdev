@@ -3,67 +3,10 @@
   <meta name="viewport" content="width=device-width, user-scalable=no">
   <head>
   <link rel='shortcut icon' type='image/x-icon' href='assets/images/favicon.ico'>
-  <script type="text/javascript" src="js/paper-full.min.js"></script>
-  <script type="text/javascript" src="js/paperbear.js"></script>
-  <script type="text/javascript" src="js/tree.js"></script>
-  <script type="text/javascript" src="js/scene.js"></script>
-  <script type="text/javascript">
-      var woodBrown = '#4C3D00';
-      
-    	paper.install(window);
-    	window.onload = function() {
-    	  var canvas = document.getElementById('pCanvas');
-    	  canvas.width = window.innerWidth * 0.9;
-    	  canvas.height = 9 * canvas.width / 16;
-    	  var origWidth = canvas.width;
-    	  var origHeight = canvas.height;
-    	  var desiredWidth = 1920;
-    	  var desiredHeight = 1080;
-    	  paper.setup(canvas);
-    	  
-    	  //grass.create(canvas.width, canvas.height);
-    	  createGrass(canvas.width, canvas.height);
-    	  
-    	  // use view.pixelRatio to draw everything
-    	  var bear = new PaperBear(canvas.width/3,
-                                 2*canvas.height/3,
-                                 canvas.width/30,
-                                 canvas.height/8);
-                                     
-        //fallenLog.create(canvas.width/6, canvas.height / 3,
-           //        canvas.width/6, canvas.heigth / 6);
-                   
-	      createTrees(canvas.width, canvas.height);
-	                  
-    	  view.onFrame = function(event) {
-	        bear.animate(event);
-	      }
-	      
-        var resizeCanvas = function() {
-          var height = 9 * window.innerWidth / 16;
-          if (height <= window.innerHeight) {
-            canvas.width = window.innerWidth * 0.9;
-            canvas.height = height;
-          } else {
-            canvas.height = window.innerHeight;
-            canvas.width = (16 * canvas.height / 9) * 0.9;
-          }
-          var sx = canvas.width / origWidth;
-          var sy = canvas.height / origHeight;
-          grass.scale(sx, sy);
-	        bear.scale(sx, sy);
-	        for (var i = 0; i < trees.length; ++i)
-	          trees[i].scaleForResize(sx, sy);
-        }
-
-        window.addEventListener('resize', resizeCanvas, false);
-        window.addEventListener('orientationchange', resizeCanvas, false);
-	    }
-    </script>
   <style>
     html {
       height: 100%;
-      background-color: #E6E6E6;
+      background-color: #2AA198;
     }
     body {
       position: absolute;
@@ -74,22 +17,18 @@
       text-align:center;
       width: 90%;
       height: 100%;
-      background-color: #94DBFF;
+      background-color: #002B36;
     }
     h1 {
-      color : #6B8F00;
+      color : #859900;
       font-family:"Lucida Console", Monaco, monospace;
     }
     h2 {
-      color : #828282;
-      font-family:"Lucida Console", Monaco, monospace;
-    }
-    h3 {
-      color : #828282;
+      color : #B58900;
       font-family:"Lucida Console", Monaco, monospace;
     }
     p {
-      color : #EC9737;
+      color : #2AA198;
       font-family:"Lucida Console", Monaco, monospace;
     }
   </style>
@@ -98,14 +37,13 @@
   <body>
     <h1>...</h1>
     <h2>Coding Bear</h2>
-    <p>My name is Sam and I'm a software engineer. <br>
-      This will be my site. <br>
-      I like sunshine, coding, trees and things... <br><br>
+    <p>My name is Sam and I'm a software engineer who likes the outdoors
+       and would prefer to hibernate during the winter months. This site is
+       to hold any web-based projects that I want to play with. <br><br>
     </p>
-    <h3>Contact</h3>
     <p>
-      <a href="mailto:sam@codingbear.uk" style='color:#6B8F00;'>Email</a> <br>
-      <a href="https://twitter.com/trees_sun_code" style='color:#6B8F00;'>Twitter</a> <br>
+      <a href="mailto:sam@codingbear.uk" style='color:#859900;'>Email</a> <br>
+      <a href="https://twitter.com/trees_sun_code" style='color:#859900;'>Twitter</a> <br>
     </p>
     <canvas id="pCanvas"></canvas>
   </body>
