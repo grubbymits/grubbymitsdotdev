@@ -3,13 +3,10 @@
   <head>
   <meta name="viewport" content="width=device-width">
   <meta name="description" content="Sam Parker's personal website for his web development projects.">
-  <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+  <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"  media="screen,projection"/>
+  <link type="text/css" rel="stylesheet" href="css/font-awesome.min.css"  media="screen,projection"/>
   <link rel='shortcut icon' type='image/x-icon' href='assets/images/favicon.ico'>
   <style>
-    html {
-      height: 100%;
-      background-color: #2AA198;
-    }
     h1 {
       color : #B58900;
       font-family:"Lucida Console", Monaco, monospace;
@@ -24,15 +21,15 @@
     <title>CodingBear</title>
   </head>
   <body>
-    <div class="row center-align">
-      <div class="col push-m2 push-l2 l8 m8 s12"
-           style="background-color:#002B36;">
+    <div style="background-color:#2AA198">
+    <div class="container" style="background-color:#002B36">
+    <div class="row">
+      <div class="col-lg-4 col-md-4 col-sm-12">
         <h1>Coding Bear</h1>
       </div>
     </div>
     <div class="row">
-      <div class="col push-m2 push-l2 l5 m5 s12"
-           style="background-color:#002B36;">
+      <div class="col-lg-8 col-md-7 col-sm-9 col-xs-12">
         <p>My name is Sam Parker and I'm a software engineer. I work on
            compilers at ARM for my day job, but this site is to hold any
            web-based projects that I want to play with in my spare time. I'm
@@ -42,16 +39,15 @@
            in a pub.<br><br>
         </p>
       </div>
-      <div class="col push-m2 push-l2 l3 m3 s12 center-align"
-           style="background-color:#002B36;">
+      <div class="col-lg-4 col-md-5 col-sm-3 col-xs-12">
         <p>
-          Insert professional and approachable headshot here.<br>
+          [INSERT PROFESSIONAL AND APPROACHABLE HEADSHOT HERE]<br>;)<br>
         </p>
       </div>
     </div>
-    <div class="row center-align">
-      <div class="col push-m2 push-l2 l8 m8 s12"
-           style="background-color:#002B36; padding-bottom:100%">
+    <div class="row">
+      <div class="col-push-md-2 col-push-lg-2 col-lg-8 col-md-8 col-sm-12"
+           style="padding-bottom:100%">
         <h1>Games</h1>
         <p>
           Dungen is a work in progress to create a turn-based dungeon crawling
@@ -68,12 +64,27 @@
           nicely though.<br>
           <a href='dungen/start.html'>Dungen</a><br>
         </p>
-        <h1>Contact Me</h1>
-          <a href="http://github.com/grubbymits">Github</a> <br>
-          <a href="https://uk.linkedin.com/in/samueljonparker">LinkedIn</a> <br>
-          <a href="mailto:sam@codingbear.uk">Email</a> <br>
-          <a href="https://twitter.com/trees_sun_code">Twitter</a> <br>
+        <h1>Contact</h1>
+        <a class="btn btn-lg btn-social-icon btn-envelope"
+            href="mailto:sam@codingbear.uk">
+            <span class="fa fa-envelope" aria-hidden="true"></span> Email
+        </a>
+        <a class="btn btn-lg btn-social-icon btn-github"
+            href="http://github.com/grubbymits">
+            <span class="fa fa-github"></span> Github
+        </a>
+        <a class="btn btn-lg btn-social-icon btn-linkedin"
+           href="https://uk.linkedin.com/in/samueljonparker">
+            <span class="fa fa-linkedin"></span> LinkedIn
+        </a>
+        <a class="btn btn-lg btn-social-icon btn-twitter"
+            href="https://twitter.com/trees_sun_code">
+            <span class="fa fa-twitter"></span> Twitter
+        </a>
       </div>
     </div>
+    </div>
+    </div>
+    <script>type="text/javascript" src="js/bootstrap.min.js</script>
   </body>
 </html>
