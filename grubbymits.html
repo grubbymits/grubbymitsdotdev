@@ -12,27 +12,100 @@
   <body>
     <div style="background-color:#002B36">
     <div class="row">
-      <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6">
-        <cb_h1>[Insert Page Title Here]<br></cb_h1>
-        <cb_p><br>
-        Mundling through making games.
-        </cb_p>
-      </div>
-      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
         <img class="img-responsive img-circle"
-             src="assets/images/sam-parker-lens.jpg" alt="sam parker">
+             src="assets/images/sam-parker-coffee.jpg" alt="sam parker">
         <cb_p><br>
         By day, Sam works as a compiler engineer at Arm. By night he's
-        generally lazy, playing games and watching netflix, but sometimes
+        generally lazy, playing games and watching Netflix, but sometimes
         he does some game programming. Any fruits of that labour is held here.
-        He likes cooking, music, plants and being outside. He also doesn't
-        mind his wife too much either.<br><br> 
+        He likes photography, travelling, hiking, camping and his wife.<br><br> 
+        <cb_h1>Contact<br></cb_h1>
+        <a class="btn btn-lg btn-social-icon btn-github"
+            href="http://github.com/grubbymits">
+            <span class="fa fa-github"></span> Github
+        </a>
+        <a class="btn btn-lg btn-social-icon btn-linkedin"
+           href="https://uk.linkedin.com/in/samueljonparker">
+            <span class="fa fa-linkedin"></span> LinkedIn
+        </a>
         </cb_p>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-8 col-md-8 col-sm-12"
+      <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12"
            style="padding-bottom:100%">
+        <cb_h1>Game Projects<br></cb_h1>
+        <cb_p>
+          <a style="font-size:medium" href=''>Noisey World</a>
+	  is a 2D island generator, written in Go, that uses a
+	  <a href="https://github.com/ojrac/opensimplex-go">Perlin noise generator</a>
+	  to create a height map and as the starting point for placing
+	  rocks and trees. Moisture is added via a simple simulation of clouds
+	  moving across the island, from a given direction. Most variables are
+	  command line options and a good part of the generator is multi-threaded.
+	  <br><br> 
+          My first attempt at a procedurally generated was just some brute
+          force thing that I created for Dungen. What I really wanted to do
+          was to try to create a outside world - I find those types of games
+          far more appealing. I quickly stumbled upon the procedural generation
+          <a href="https://www.reddit.com/r/proceduralgeneration/"> sub</a> and,
+          like every other noob, got excited about Perlin noise.<br>
+          I wanted to restrict myself to a 2D world and create something that
+          looks something like the glorious British Isles: Scotland and Suffolk
+          in particular... I took some resources from Kenney, made a load
+          of modifications, and read through Amit Patel's
+          <a href="https://www.redblobgames.com/maps/terrain-from-noise/">
+          tutorial</a>. Making a 2D map with different 'heights' is something
+  	  that I've never concerned myself with before. But I can remember the
+	  joy of Zelda and Pokemon on the GameBoy - so the map is 
+	  constructed to look like those games: terraces where the character
+	  would traverse them from the side facing the player.
+          <br><br>
+	  I quite like Go, for me it feels like scripting with C.
+	  It was useful to have standard library for image manipulation and
+	  though Go is designed for concurrency, it wasn't difficult to run
+	  multiple threads across multiple cores simultaneously too. The
+	  drawbacks, similar to C, are having to write boiler code for anything
+	  algorithmic! Package management is also a bit odd... but it seems both
+	  dependencies and generics are something that are being addressed. I
+	  really don't understand how/why these were overlooked before. Or why
+	  the official compiler doesn't make use of GCC or LLVM...<br><br>
+        </cb_p>
+        <cb_p>
+          <a style="font-size:medium" href='dungen/start.html'>Dungen</a>
+           is an (abandoned) work in progress to create a 2D turn-based dungeon crawling
+          fantasy RPG, written in Javascript. The player selects a character
+          and then the area in which to play - with different areas that
+          contain different types of enemy.
+          There are multiple areas, with each area containing multiple levels
+          which increase in difficulty.
+          The player will build up a party of
+          characters to defeat the dungeon, collecting loot from chests on the
+          way. The equipment system is a bit of a mess though!
+          The game engine is reasonably complete, but it's visuals are lacking.
+          'stand out' features are procedurally generated maps, with local
+          storage to save progress between sessions.
+          The game has a basic battle and magic system, with different playable
+          characters; though the enemy and NPC details need to be filled out -
+	  they're pretty stupid and it's rather boring...<br><br>
+          I learnt a lot of playing with his project but ultimately couldn't be
+          bothered to do the big re-writes that it needs. I also learnt that
+          writing a, relatively, large program in Javascript is a bit of a pain.
+          Typescript certainly interests me, but adding tooling to transpiling
+          does not... being unshackled from those types of tools was what got
+          me interested in interweb programming in the first place!
+          <br><br>
+        </cb_p>
+        <cb_p>
+          <a style="font-size:medium" href='space-shooter/play.html'>Space Shooter</a>
+            A simple shoot-up 'em that started as a project to teach da yoot
+            Javascript. A simple game which partitions the screen in columns and
+            injects enenmy spaceships into them, with only one ship per column.
+            The enemy ships travel from the top of the screen to the bottom and
+            randomly shoot lasers. The player controls a ship located at the
+            bottom of the screen and has to prevent the enemy ships from passing
+            it. All of the resources are by Kenney, linked above.
+          <br><br>
+        </cb_p>
         <cb_h1>Links to legends<br></cb_h1>
         <cb_p>
           <a style="font-size:medium" href='https://www.redblobgames.com/'>
@@ -57,68 +130,6 @@
           The stuff oftens inspires me to make something.
           <br><br>
         </cb_p>
-        <cb_h1>Game Projects<br></cb_h1>
-        <cb_p>
-          <a style="font-size:medium" href='dungen/start.html'>Dungen</a>
-           is an (abandoned) work in progress to create a 2D turn-based dungeon crawling
-          fantasy RPG, written in Javascript. The player selects a character
-          and then the area in which to play - with different areas that
-          contain different types of enemy.
-          There are multiple areas, with each area containing multiple levels
-          which increase in difficulty.
-          The player will build up a party of
-          characters to defeat the dungeon, collecting loot from chests on the
-          way. The equipment system is a bit of a mess though!
-          The game engine is reasonably complete, but it's visuals are lacking.
-          'stand out' features are procedurally generated maps, with local
-          storage to save progress between sessions.
-          The game has a basic battle and magic system, with different playable
-          characters; though the enemy and NPC details need to be filled out -
-          they're pretty stupid and it's rather boring...<br>
-          I learnt a lot of playing with his project but ultimately couldn't be
-          bothered to do the big re-writes that it needs. I also learnt that
-          writing a, relatively, large program in Javascript is a bit of a pain.
-          Typescript certainly interests me, but adding tooling to transpiling
-          does not... being unshackled from those types of tools was what got
-          me interested in interweb programming in the first place!
-          <br><br>
-        </cb_p>
-        <cb_p>
-          <a style="font-size:medium" href='space-shooter/play.html'>Space Shooter</a>
-            A simple shoot-up 'em that started as a project to teach da yoot
-            Javascript. A simple game which partitions the screen in columns and
-            injects enenmy spaceships into them, with only one ship per column.
-            The enemy ships travel from the top of the screen to the bottom and
-            randomly shoot lasers. The player controls a ship located at the
-            bottom of the screen and has to prevent the enemy ships from passing
-            it. All of the resources are by Kenney, linked above.
-          <br><br>
-        </cb_p>
-        <cb_p>
-          <a style="font-size:medium" href=''>Noisey World</a>
-          My first attempt at a procedurally generated was just some brute
-          force thing that I created for Dungen. What I really wanted to do
-          was to try to create a outside world - I find those types of games
-          far more appealing. I quickly stumbled upon the procedural generation
-          <a href="https://www.reddit.com/r/proceduralgeneration/"> sub</a> and,
-          like every other noob, got excited about Perlin noise.<br>
-          I wanted to restrict myself to a 2D world and create something that
-          looks something like the glorious British Isles: Scotland and Suffolk
-          in particular... I took some resources from Kenney, along with a load
-          of modifications and read through Amit Patel's
-          <a href="https://www.redblobgames.com/maps/terrain-from-noise/">
-          tutorial</a>
-          <br><br>
-        </cb_p>
-        <cb_h1>Contact<br></cb_h1>
-        <a class="btn btn-lg btn-social-icon btn-github"
-            href="http://github.com/grubbymits">
-            <span class="fa fa-github"></span> Github
-        </a>
-        <a class="btn btn-lg btn-social-icon btn-linkedin"
-           href="https://uk.linkedin.com/in/samueljonparker">
-            <span class="fa fa-linkedin"></span> LinkedIn
-        </a>
       </div>
     </div>
   </body>
