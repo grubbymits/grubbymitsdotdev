@@ -13,15 +13,41 @@
     <div style="background-color:#002B36">
       <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12"
            style="padding-bottom:100%">
-        <cb_h1>Game Projects<br></cb_h1>
+        <cb_h1>Projects<br><br></cb_h1>
+        <cb_h2>World Tree<br></cb_h2>
         <cb_p>
-          <a style="font-size:medium" href=''>Noisey World</a>
-	  is a 2D island generator, written in Go, that uses a
+          My latest attempt at working with procedurally generated worlds, but
+          this time as a library. I learnt quite a bit from noisey-world and
+          from Game Programming Patterns, so this project actually feels quite
+          well organised after having some design go into it! I also finally
+          took a look at TypeScript and I regret not doing so earlier!<br><br>
+          It's by far the most feature rich project of mine, with the engine
+          supporting geometry, collision detection and a light-weight event system
+          that make it simple for users to quickly generate a world and plug
+          characters into it. It currently supports 2D graphics, in an isometric
+          perspective, but it's been designed so a different renderer can be used
+          instead if it implements a couple of abstract methods. One nice little
+          feature is that a user can provide the dimension ratios (WxDxH) of their
+          isometric sprites and the engine will automatically create a simple box
+          geometry for it. The engine also contains two simple world generators,
+          one each for indoors and outdoors, which try to generate as complex
+          appearing world as possible with the given assets: it's possible to
+          generate a world using just a single sprite, but the worlds look much
+          better when having at least two so that walls and floors are better
+          defined.
+          <br><br>
+        </cb_p>
+
+        <cb_h2>Noisey World<br></cb_h2>
+        <cb_p>
+	  Noisey World is a 2D island generator, written in Go, that uses a
 	  <a href="https://github.com/ojrac/opensimplex-go">Perlin noise generator</a>
 	  to create a height map and as the starting point for placing
 	  rocks and trees. Moisture is added via a simple simulation of clouds
 	  moving across the island, from a given direction. Most variables are
 	  command line options and a good part of the generator is multi-threaded.
+          I didn't port it to be a webapp, but pre-generated examples of the islands
+          can be found <a href='noisey-world/examples.html'>here</a>.
 	  <br><br>
           My first attempt at a procedurally generated was just some brute
           force thing that I created for Dungen. What I really wanted to do
@@ -50,9 +76,10 @@
 	  really don't understand how/why these were overlooked before. Or why
 	  the official compiler doesn't make use of GCC or LLVM...<br><br>
         </cb_p>
+
+        <cb_h2>Dungen<br></cb_h2>
         <cb_p>
-          <a style="font-size:medium" href='dungen/start.html'>Dungen</a>
-           is an (abandoned) work in progress to create a 2D turn-based dungeon crawling
+          Dungen is an (abandoned) work in progress to create a 2D turn-based dungeon crawling
           fantasy RPG, written in Javascript. The player selects a character
           and then the area in which to play - with different areas that
           contain different types of enemy.
@@ -66,7 +93,8 @@
           storage to save progress between sessions.
           The game has a basic battle and magic system, with different playable
           characters; though the enemy and NPC details need to be filled out -
-	  they're pretty stupid and it's rather boring...<br><br>
+	  they're pretty stupid and it's rather boring... But it can be played
+          <a href='dungen/start.html'> here</a>!<br><br>
           I learnt a lot of playing with his project but ultimately couldn't be
           bothered to do the big re-writes that it needs. I also learnt that
           writing a, relatively, large program in Javascript is a bit of a pain.
@@ -75,17 +103,20 @@
 	  was what got me interested in interweb programming in the first place!
           <br><br>
         </cb_p>
+
+        <cb_h2>Space Shooter<br></cb_h2>
         <cb_p>
-          <a style="font-size:medium" href='space-shooter/play.html'>Space Shooter</a>
-            A simple shoot-up 'em that started as a project to teach da yoot
+            Space Shooter A simple shoot-up 'em that started as a project to teach da yoot
             Javascript. A simple game which partitions the screen in columns and
             injects enenmy spaceships into them, with only one ship per column.
             The enemy ships travel from the top of the screen to the bottom and
             randomly shoot lasers. The player controls a ship located at the
             bottom of the screen and has to prevent the enemy ships from passing
-            it. All of the resources are by Kenney, linked below.
+            it. All of the resources are by Kenney, linked below. It can be played
+            <a href='space-shooter/play.html'> here</a>.
           <br><br>
         </cb_p>
+
         <cb_h1>Links to legends<br></cb_h1>
         <cb_p>
           <a style="font-size:medium" href='https://www.redblobgames.com/'>
@@ -108,6 +139,23 @@
           <a style="font-size:medium" href='https://kenney.nl/'>Kenney</a>
           Endless, high quality, game assets. Free to download, donate or buy.
           The stuff oftens inspires me to make something.
+          <br><br>
+        </cb_p>
+        <cb_p>
+          <a style="font-size:medium" href='https://inkscape.org/'>Inkscape</a>
+          An excellent (open source!) vector graphics program. I haven't used the
+          Adobe equivalent, but I have found it much easier to use than Affinity, as
+          well as producing better results.
+          <br><br>
+        </cb_p>
+        <cb_p>
+          <a style="font-size:medium" href='https://www.geomalgorithms.com/'>GeomAlgorithms</a>
+          An extensive, and understandable, resource for implementing geometry algorithms.
+          <br><br>
+        </cb_p>
+        <cb_p>
+          <a style="font-size:medium" href='https://www.geeksforgeeks.org/'>GeeksforGeeks</a>
+          Has a good collection of tutorials and examples for various algorithms and structures.
           <br><br>
         </cb_p>
       </div>
