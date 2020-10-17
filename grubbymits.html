@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html>
-  <head>
-  <meta name="viewport" content="width=device-width">
-  <meta name="description" content="Sam Parker's web development projects.">
-  <link type="text/css" rel="stylesheet" href="css/codingbear.css"/>
-  <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"  media="screen,projection"/>
-  <link type="text/css" rel="stylesheet" href="css/font-awesome.min.css"  media="screen,projection"/>
-  <link rel='shortcut icon' type='image/x-icon' href='favicon.ico'>
-    <title>Code Fings</title>
-  </head>
-  <body>
-    <div style="background-color:#002B36">
-      <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12"
-           style="padding-bottom:100%">
-        <cb_h1>Projects<br><br></cb_h1>
-        <cb_h2>World Tree<br></cb_h2>
-        <cb_p>
+<head>
+<meta name="viewport" content="width=device-width">
+<meta name="description" content="Sam Parker's web development projects.">
+<link type="text/css" rel="stylesheet" href="css/codingbear.css"/>
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"  media="screen,projection"/>
+<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css"  media="screen,projection"/>
+<link rel='shortcut icon' type='image/x-icon' href='favicon.ico'>
+<title>Code Fings</title>
+</head>
+
+<body>
+  <div style="background-color:#002B36">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12"
+             style="padding-bottom:100%">
+          <cb_h1>Projects<br><br></cb_h1>
+          <cb_h2>World Tree<br></cb_h2>
+          <cb_p>
           My latest attempt at working with procedurally generated worlds, but
           this time as a library. I learnt quite a bit from noisey-world and
           from Game Programming Patterns, so this project actually feels quite
@@ -34,13 +37,12 @@
           appearing world as possible with the given assets: it's possible to
           generate a world using just a single sprite, but the worlds look much
           better when having at least two so that walls and floors are better
-          defined.
-          <br><br>
-        </cb_p>
+          defined.<br><br>
+          </cb_p>
 
-        <cb_h2>Noisey World<br></cb_h2>
-        <cb_p>
-	  Noisey World is a 2D island generator, written in Go, that uses a
+          <cb_h2>Noisey World<br></cb_h2>
+          <cb_p>
+          Noisey World is a 2D island generator, written in Go, that uses a
 	  <a href="https://github.com/ojrac/opensimplex-go">Perlin noise generator</a>
 	  to create a height map and as the starting point for placing
 	  rocks and trees. Moisture is added via a simple simulation of clouds
@@ -75,10 +77,10 @@
 	  dependencies and generics are something that are being addressed. I
 	  really don't understand how/why these were overlooked before. Or why
 	  the official compiler doesn't make use of GCC or LLVM...<br><br>
-        </cb_p>
+          </cb_p>
 
-        <cb_h2>Dungen<br></cb_h2>
-        <cb_p>
+          <cb_h2>Dungen<br></cb_h2>
+          <cb_p>
           Dungen is an (abandoned) work in progress to create a 2D turn-based dungeon crawling
           fantasy RPG, written in Javascript. The player selects a character
           and then the area in which to play - with different areas that
@@ -102,83 +104,74 @@
 	  transpiling does not... being unshackled from those types of tools
 	  was what got me interested in interweb programming in the first place!
           <br><br>
-        </cb_p>
+          </cb_p>
 
-        <cb_h2>Space Shooter<br></cb_h2>
-        <cb_p>
-            Space Shooter A simple shoot-up 'em that started as a project to teach da yoot
-            Javascript. A simple game which partitions the screen in columns and
-            injects enenmy spaceships into them, with only one ship per column.
-            The enemy ships travel from the top of the screen to the bottom and
-            randomly shoot lasers. The player controls a ship located at the
-            bottom of the screen and has to prevent the enemy ships from passing
-            it. All of the resources are by Kenney, linked below. It can be played
-            <a href='space-shooter/play.html'> here</a>.
+          <cb_h2>Space Shooter<br></cb_h2>
+          <cb_p>
+          Space Shooter A simple shoot-up 'em that started as a project to teach da yoot
+          Javascript. A simple game which partitions the screen in columns and
+          injects enenmy spaceships into them, with only one ship per column.
+          The enemy ships travel from the top of the screen to the bottom and
+          randomly shoot lasers. The player controls a ship located at the
+          bottom of the screen and has to prevent the enemy ships from passing
+          it. All of the resources are by Kenney, linked below. It can be played
+          <a href='space-shooter/play.html'> here</a>.
           <br><br>
-        </cb_p>
+          </cb_p>
 
-        <cb_h1>Links to legends<br></cb_h1>
-        <cb_p>
+          <cb_h1>Links to legends<br></cb_h1>
+          <cb_p>
           <a style="font-size:medium" href='https://www.redblobgames.com/'>
-          Red Blob Games</a>
+           Red Blob Games</a>
           A truly great resource for anyone wanting to learn some algorithms and
           techniques useful in 2D game development. The site contains many
           iteractive demos and example implementations - I can't recommend it
           enough.
           <br><br>
-        </cb_p>
-        <cb_p>
           <a style="font-size:medium" href='http://journal.stuffwithstuff.com/'>
           Game Patterns</a>
           Bob Nystrom wrote a great book, 'Game Programming Patterns', and, of
           course, he has a blog which often also covers game programming.
           I really enjoy his writing style.
           <br><br>
-        </cb_p>
-        <cb_p>
           <a style="font-size:medium" href='https://kenney.nl/'>Kenney</a>
           Endless, high quality, game assets. Free to download, donate or buy.
           The stuff oftens inspires me to make something.
           <br><br>
-        </cb_p>
-        <cb_p>
           <a style="font-size:medium" href='https://inkscape.org/'>Inkscape</a>
           An excellent (open source!) vector graphics program. I haven't used the
           Adobe equivalent, but I have found it much easier to use than Affinity, as
           well as producing better results.
           <br><br>
-        </cb_p>
-        <cb_p>
           <a style="font-size:medium" href='https://www.geomalgorithms.com/'>GeomAlgorithms</a>
           An extensive, and understandable, resource for implementing geometry algorithms.
           <br><br>
-        </cb_p>
-        <cb_p>
           <a style="font-size:medium" href='https://www.geeksforgeeks.org/'>GeeksforGeeks</a>
           Has a good collection of tutorials and examples for various algorithms and structures.
           <br><br>
-        </cb_p>
-      </div>
-    <div class="row">
-      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-        <img class="img-responsive img-circle"
-             src="assets/images/sam-parker-coffee.jpg" alt="sam parker">
-        <cb_p><br>
-        By day, Sam works as a compiler engineer at Arm. By night he's
-        generally lazy, playing games and watching Netflix, but sometimes
-        he does some game programming. Any fruits of that labour is held here.
-        He likes photography, travelling, hiking, camping and his wife.<br><br>
-        <cb_h1>Contact<br></cb_h1>
-        <a class="btn btn-lg btn-social-icon btn-github"
-            href="http://github.com/grubbymits">
-            <span class="fa fa-github"></span> Github
-        </a>
-        <a class="btn btn-lg btn-social-icon btn-linkedin"
-           href="https://uk.linkedin.com/in/samueljonparker">
-            <span class="fa fa-linkedin"></span> LinkedIn
-        </a>
-        </cb_p>
+          </cb_p>
+        </div>
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+            <img class="img-responsive img-circle"
+                 src="assets/images/sam-parker-coffee.jpg" alt="sam parker">
+            <cb_p><br>
+            By day, Sam works as a compiler engineer at Arm. By night he's
+            generally lazy, playing games and watching Netflix, but sometimes
+            he does some game programming. Any fruits of that labour is held here.
+            He likes photography, travelling, hiking, camping and his wife.<br><br>
+            <cb_h1>Contact<br></cb_h1>
+            <a class="btn btn-lg btn-social-icon btn-github"
+               href="http://github.com/grubbymits">
+              <span class="fa fa-github"></span> Github</a>
+            <a class="btn btn-lg btn-social-icon btn-linkedin"
+               href="https://uk.linkedin.com/in/samueljonparker">
+               <span class="fa fa-linkedin"></span> LinkedIn</a>
+            </cb_p>
+          </div>
+        </div>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 </html>
