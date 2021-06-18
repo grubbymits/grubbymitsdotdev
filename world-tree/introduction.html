@@ -3,8 +3,8 @@
 <head>
 <meta name="viewport" content="width=device-width">
 <meta name="description" content="Introduction to game world generation with World Tree">
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" media="screen,projection"/>
 <link type="text/css" rel="stylesheet" href="../css/grubbymits.css"/>
-<link type="text/css" rel="stylesheet" href="../css/bootstrap.min.css"  media="screen,projection"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/base16/solarized-dark.min.css" integrity="sha512-JPpsArcPmVD/lHCCuZeG6Kx4x2qURRXHXxKYaXYJiKEKaoLOcXKDYqQ4jSeauXbk+U6uZ1UzrGO85y+lpys0Og==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel='shortcut icon' type='image/x-icon' href='../favicon.ico'>
 <title>World Tree Introduction</title>
@@ -73,15 +73,17 @@
     <div width="100%" background-position="center"></div>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <img class="img-responsive" src="../assets/images/the-bad-step.jpg" alt="island coast">
+          <img class="img-fluid" src="../assets/images/the-bad-step.jpg" alt="island coast">
         </div>
       </div>
-      <ul class="breadcrumb">
-        <li><a href="../index.html">Home</a></li>
-        <li>Intro</li>
-        <li><a href="./water.html">Water</a></li>
-        <li><a href="./biomes.html">Biomes</a></li>
-      </ul>
+      <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+        <li class="breadcrumb-item active">Intro</li>
+        <li class="breadcrumb-item"><a href="./water.html">Water</a></li>
+        <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
+      </ol>
+      </nav>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <cb_h1>World Tree<br><br></cb_h1>
@@ -106,35 +108,35 @@
       </div>
       <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-         <figure>
-          <img class="img-responsive" src="res/img/one-block.png"
-               alt="map generated with single block">
-          <figcaption>Small map generated with a single sprite.</figcaption>
-        </figure>
+          <figure>
+            <img class="img-fluid" src="res/img/one-block.png"
+                  alt="map generated with single block">
+            <figcaption>Small map generated with a single sprite.</figcaption>
+          </figure>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <figure>
+            <img class="img-fluid" src="res/img/two-blocks.png"
+                  alt="map generated with two blocks">
+            <figcaption>Small map generated with two sprites.</figcaption>
+          </figure>
+          </div>
       </div>
       <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-         <figure>
-          <img class="img-responsive" src="res/img/two-blocks.png"
-               alt="map generated with two blocks">
-          <figcaption>Small map generated with two sprites.</figcaption>
-        </figure>
-      </div>
-      <div class="row">
+          <figure>
+            <img class="img-fluid" src="res/img/three-blocks.png"
+                  alt="map generated with three blocks">
+            <figcaption>Small map generated with three sprites.</figcaption>
+          </figure>
+        </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-         <figure>
-          <img class="img-responsive" src="res/img/three-blocks.png"
-               alt="map generated with three blocks">
-          <figcaption>Small map generated with three sprites.</figcaption>
-        </figure>
-      </div>
-      <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-         <figure>
-          <img class="img-responsive" src="res/img/island-with-ramps.png"
-               alt="island generated with 7 sprites.">
-          <figcaption>Small island generated with seven sprites.</figcaption>
-        </figure>
+          <figure>
+            <img class="img-fluid" src="res/img/island-with-ramps.png"
+                  alt="island generated with 7 sprites.">
+            <figcaption>Small island generated with seven sprites.</figcaption>
+          </figure>
+        </div>
       </div>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -238,16 +240,16 @@ var update = function update() {
 }
 window.requestAnimationFrame(update);
           </code></pre>
-        <cb_p>
-        The code is running in the canva below (if your screen is large enough), so use mouse click
-        to move the camera around.<br><br>
-        </cb_p>
-        </div>
-        <div>
-          <canvas id="demoCanvas" oncontextmenu="return false;" width="1140" height="760">
+          <cb_p>
+          The code is running in the canva below (if your screen is large enough), so use mouse click
+          to move the camera around.<br><br>
+          </cb_p>
         </div>
       </div>
+      <div class="d-none d-sm-block">
+        <canvas id="demoCanvas" oncontextmenu="return false;" width="1140" height="760">
       </div>
+    </div>
     </div>
   </div>
 </body>

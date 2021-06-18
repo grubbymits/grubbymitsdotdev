@@ -24,19 +24,13 @@ figcaption {
   font-size:medium;
   text-align: center;
 }
-ul.breadcrumb {
+ol.breadcrumb {
   color : #859900;
   background-color: #002B36;
   font-family: 'Courier New', monospace;
 }
-
-ul.breadcrumb li {
+ol.breadcrumb li {
   color : #B58900;
   background-color: #002B36;
   font-family: 'Courier New', monospace;
-}
-@media only screen and (max-width: 1026px) {
-    #demoCanvas {
-        display: none;
-    }
 }

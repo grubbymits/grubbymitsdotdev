@@ -3,8 +3,8 @@
 <head>
 <meta name="viewport" content="width=device-width">
 <meta name="description" content="Adding water to the game world">
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" media="screen,projection"/>
 <link type="text/css" rel="stylesheet" href="../css/grubbymits.css"/>
-<link type="text/css" rel="stylesheet" href="../css/bootstrap.min.css"  media="screen,projection"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/base16/solarized-dark.min.css" integrity="sha512-JPpsArcPmVD/lHCCuZeG6Kx4x2qURRXHXxKYaXYJiKEKaoLOcXKDYqQ4jSeauXbk+U6uZ1UzrGO85y+lpys0Og==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel='shortcut icon' type='image/x-icon' href='../favicon.ico'>
 <title>World Tree water</title>
@@ -100,15 +100,17 @@
     <div width="100%" background-position="center"></div>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <img class="img-responsive" src="../assets/images/mull.jpeg" alt="island coast">
+          <img class="img-fluid" src="../assets/images/mull.jpeg" alt="island coast">
         </div>
       </div>
-      <ul class="breadcrumb">
-        <li><a href="../index.html">Home</a></li>
-        <li><a href="./introduction.html">Intro</a></li>
-        <li>Water</li>
-        <li><a href="./biomes.html">Biomes</a></li>
-      </ul>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="./introduction.html">Intro</a></li>
+          <li class="breadcrumb-item active">Water</li>
+          <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
+        </ol>
+      </nav>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <cb_h1>Adding water<br><br></cb_h1>
@@ -121,6 +123,10 @@
           Adding water to a world is as simple as supplying a sprite to represent it,
           and to set a couple of extra parameters in the TerrainBuilderConfig.<br>
           </cb_p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <pre><code class="language-javascript">
 // Add a couple of sprites for the beach and the sea.
 addGraphic(WT.TerrainType.Sand, WT.TerrainShape.Flat, spriteWidth * 2, 0);
@@ -141,6 +147,10 @@ let heightMap = [ [ 0, 0, 0, 0, 0 ],
                    [ 0, 1, 1, 1, 0 ],
                    [ 0, 0, 0, 0, 0 ] ];
           </code></pre>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <cb_h2>Shoreline<br></cb_h2>
           <cb_p>
           We can also add graphics for TerrainFeatures, in this case we're adding some to
@@ -153,6 +163,10 @@ let heightMap = [ [ 0, 0, 0, 0, 0 ],
           StaticGraphicComponent objects, which is what the TerrainBuilder is using for the
           surface tiles, instead.<br><br>
           </cb_p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <pre><code class="language-javascript">
 // Create a new SpriteSheet from the waves.png file.
 const waveSheet = new WT.SpriteSheet("res/img/waves");
@@ -178,19 +192,19 @@ for (let y in features) {
   WT.Terrain.addFeatureGraphics(feature, waves);
 }
           </code></pre>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <cb_p>
           And now we have a little island, with a central rock and with waves lapping onto
           the beach.<br><br>
-          </cb_p>
-          <cb_p>
           The code is running in the canva below (if your screen is large enough), so use mouse click
           to move the camera around.<br><br>
           </cb_p>
-          <div>
-            <canvas id="demoCanvas" oncontextmenu="return false;" width="1140" height="760">
-          </div>
         </div>
       </div>
+      <canvas id="demoCanvas" oncontextmenu="return false;" width="1140" height="760">
     </div>
   </div>  
 </body>
