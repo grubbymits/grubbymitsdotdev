@@ -35,3 +35,8 @@ ul.breadcrumb li {
   background-color: #002B36;
   font-family: 'Courier New', monospace;
 }
+@media only screen and (max-width: 1026px) {
+    #demoCanvas {
+        display: none;
+    }
+}

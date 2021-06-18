@@ -150,97 +150,97 @@
           coordinate is increased, by spriteWidth, while the y-axis stays at zero.<br><br>
           </cb_p>
           <pre><code class="language-javascript">
-          // A Javascript module imports from the engine.
-          import * as WT from "./js/world-tree.js";
-          // Specify the size, in the number of pixels, of the rectangular sprite. X-axis
-          // is width, while height in the y-axis.
-          const spriteWidth = 322;
-          const spriteHeight = 270;
-          // Create a new sprite sheet from the image located at the given location. The
-          // '.png' extension will automatically be added.
-          const sheet = new WT.SpriteSheet("res/img/basic-dungeon");
-          function addGraphic(type, shape, offsetX, offsetY) {
-            WT.Terrain.addGraphic(/*terrainType*/type,
-                                  /*terrainShape*/shape,
-                                  /*spriteSheet*/sheet,
-                                  /*coord.x*/offsetX,
-                                  /*coord.y*/offsetY,
-                                  /*width*/spriteWidth,
-                                  /*height*/spriteHeight);
-          }
-          // Create two terrain sprites which will be available to the terrain builder. 
-          addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Flat, 0, 0);
-          addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Wall, spriteWidth, 0);
+// A Javascript module imports from the engine.
+import * as WT from "./js/world-tree.js";
+// Specify the size, in the number of pixels, of the rectangular sprite. X-axis
+// is width, while height in the y-axis.
+const spriteWidth = 322;
+const spriteHeight = 270;
+// Create a new sprite sheet from the image located at the given location. The
+// '.png' extension will automatically be added.
+const sheet = new WT.SpriteSheet("res/img/basic-dungeon");
+function addGraphic(type, shape, offsetX, offsetY) {
+  WT.Terrain.addGraphic(/*terrainType*/type,
+                        /*terrainShape*/shape,
+                        /*spriteSheet*/sheet,
+                        /*coord.x*/offsetX,
+                        /*coord.y*/offsetY,
+                        /*width*/spriteWidth,
+                        /*height*/spriteHeight);
+  }
+// Create two terrain sprites which will be available to the terrain builder. 
+addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Flat, 0, 0);
+addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Wall, spriteWidth, 0);
           </code></pre>
           <cb_p>
           So now that we have two different sprites the the generator can use, now we can
           define the map and which tiles will be the floor and which will be walls.<br>
           </cb_p>
-          <pre><code>
-          // 5x5 area with a wall around the edge.
-          const cellsX = 5;
-          const cellsY = 5;
-          const numTerraces = 1;
-          const heightMap = [ [ 1, 1, 1, 1, 1 ],
-                              [ 1, 0, 0, 0, 1 ],
-                              [ 1, 0, 0, 0, 1 ],
-                              [ 1, 0, 0, 0, 1 ],
-                              [ 1, 1, 1, 1, 1 ] ];
-          // The 3D dimensions of our a rectangular cuboid sprites in the game world.
-          // This is no longer pixels, but the dimensions when reversing the effects
-          // of the isometric projection that is used for the sprites.
-          const physicalDims =
-            WT.TwoByOneIsometric.getDimensions(spriteWidth, spriteHeight);
-          // The total space consumed by everything in our map.
-          const worldDims = new WT.Dimensions(physicalDims.width * cellsX,
-                                              physicalDims.depth * cellsY,
-                                              physicalDims.height * (1 + numTerraces));
+          <pre><code class="language-javascript">
+// 5x5 area with a wall around the edge.
+const cellsX = 5;
+const cellsY = 5;
+const numTerraces = 1;
+const heightMap = [ [ 1, 1, 1, 1, 1 ],
+                    [ 1, 0, 0, 0, 1 ],
+                    [ 1, 0, 0, 0, 1 ],
+                    [ 1, 0, 0, 0, 1 ],
+                    [ 1, 1, 1, 1, 1 ] ];
+// The 3D dimensions of our a rectangular cuboid sprites in the game world.
+// This is no longer pixels, but the dimensions when reversing the effects
+// of the isometric projection that is used for the sprites.
+const physicalDims =
+  WT.TwoByOneIsometric.getDimensions(spriteWidth, spriteHeight);
+// The total space consumed by everything in our map.
+const worldDims = new WT.Dimensions(physicalDims.width * cellsX,
+                                    physicalDims.depth * cellsY,
+                                    physicalDims.height * (1 + numTerraces));
 
           </code></pre>
           <cb_p>
           And now we'e ready to build the world.<br><br>
           </cb_p>
-          <pre><code>
-          window.onload = (event) => {
-            // The Context is what holds everything.
-            let context = new WT.Context(worldDims);
-            // A TerrainBuilderConfig is used to pass all the parameters to the TerrainBuilder.
-            // The only things are required are: the number of terraces (height levels) that the
-            // height map will be split into, and the default TerrainTypes to be used for the
-            // floor and walls.
-            const config = new WT.TerrainBuilderConfig(numTerraces,
-                                                       /*defaultFloor*/WT.TerrainType.Sand,
-                                                       /*defaultWall*/WT.TerrainType.Rock);
-            // Use the height map to construct a terrain.
-            let builder = new WT.TerrainBuilder(cellsX, cellsY, heightMap, config, physicalDims);
-            // Generate a much of game entities, that represent the floor and walls, and store
-            // them in the Context.
-            builder.generateMap(context);
+          <pre><code class="language-javascript">
+window.onload = (event) => {
+  // The Context is what holds everything.
+  let context = new WT.Context(worldDims);
+  // A TerrainBuilderConfig is used to pass all the parameters to the TerrainBuilder.
+  // The only things are required are: the number of terraces (height levels) that the
+  // height map will be split into, and the default TerrainTypes to be used for the
+  // floor and walls.
+  const config = new WT.TerrainBuilderConfig(numTerraces,
+                                             /*defaultFloor*/WT.TerrainType.Sand,
+                                             /*defaultWall*/WT.TerrainType.Rock);
+  // Use the height map to construct a terrain.
+  let builder = new WT.TerrainBuilder(cellsX, cellsY, heightMap, config, physicalDims);
+  // Generate a much of game entities, that represent the floor and walls, and store
+  // them in the Context.
+  builder.generateMap(context);
           </code></pre>
           <cb_p>
           Finally, we're able to add a renderer and set the loop running.<br><br>
           </cb_p>
-          <pre><code>
-            // Add a renderer, using the same projection as our sprites, which will draw
-            // onto the given canvas.
-            let canvas = document.getElementById("demoCanvas");
-            context.addRenderer(canvas, WT.Perspective.TwoByOneIsometric);
-            // Create a mouse that is controlled by left button clicks.
-            let camera = new WT.MouseCamera(context.scene, canvas,
-                                            canvas.width, canvas.height);
-            // The animation frame callback just needs to call update on the Context with the
-            // current camera.
-            var update = function update() {
-              if (document.hasFocus()) {
-                context.update(camera);
-              }
-              window.requestAnimationFrame(update);
-            }
-            window.requestAnimationFrame(update);
-          }
+          <pre><code class="language-javascript">
+// Add a renderer, using the same projection as our sprites, which will draw
+// onto the given canvas.
+let canvas = document.getElementById("demoCanvas");
+context.addRenderer(canvas, WT.Perspective.TwoByOneIsometric);
+// Create a mouse that is controlled by left button clicks.
+let camera = new WT.MouseCamera(context.scene, canvas,
+                                canvas.width, canvas.height);
+// The animation frame callback just needs to call update on the Context with the
+// current camera.
+var update = function update() {
+  if (document.hasFocus()) {
+    context.update(camera);
+  }
+  window.requestAnimationFrame(update);
+}
+window.requestAnimationFrame(update);
           </code></pre>
         <cb_p>
-        The code is running in the canva below, so use mouse click to move the camera around.<br><br>
+        The code is running in the canva below (if your screen is large enough), so use mouse click
+        to move the camera around.<br><br>
         </cb_p>
         </div>
         <div>

@@ -143,25 +143,25 @@
           that we've previously added.<br><br>
           </cb_p>
           <pre><code class="language-javascript">
-          // Add our flat surface tile graphics.
-          const spriteWidth = 322;
-          const spriteHeight = 270;
-          const sheet = new WT.SpriteSheet("res/img/basic-outside");
-          const shape = WT.TerrainShape.Flat;
-          function addGraphic(type, offsetX, offsetY) {
-            WT.Terrain.addGraphic(/*terrainType*/type,
-                                  /*terrainShape*/shape,
-                                  /*spriteSheet*/sheet,
-                                  /*coord.x*/offsetX,
-                                  /*coord.y*/offsetY,
-                                  /*width*/spriteWidth,
-                                  /*height*/spriteHeight);
-          }
-          addGraphic(WT.TerrainType.DryGrass, spriteWidth * 2, 0);
-          addGraphic(WT.TerrainType.WetGrass, spriteWidth * 3, 0);
-          addGraphic(WT.TerrainType.Mud, spriteWidth * 4, 0);
-          addGraphic(WT.TerrainType.Sand, spriteWidth * 5, 0);
-          addGraphic(WT.TerrainType.Water, spriteWidth * 6, 0);
+// Add our flat surface tile graphics.
+const spriteWidth = 322;
+const spriteHeight = 270;
+const sheet = new WT.SpriteSheet("res/img/basic-outside");
+const shape = WT.TerrainShape.Flat;
+function addGraphic(type, offsetX, offsetY) {
+  WT.Terrain.addGraphic(/*terrainType*/type,
+                        /*terrainShape*/shape,
+                        /*spriteSheet*/sheet,
+                        /*coord.x*/offsetX,
+                        /*coord.y*/offsetY,
+                        /*width*/spriteWidth,
+                        /*height*/spriteHeight);
+}
+addGraphic(WT.TerrainType.DryGrass, spriteWidth * 2, 0);
+addGraphic(WT.TerrainType.WetGrass, spriteWidth * 3, 0);
+addGraphic(WT.TerrainType.Mud, spriteWidth * 4, 0);
+addGraphic(WT.TerrainType.Sand, spriteWidth * 5, 0);
+addGraphic(WT.TerrainType.Water, spriteWidth * 6, 0);
           </code></pre>
           <cb_p>
           We're also going to make the island larger so that we have more space for more
@@ -172,35 +172,36 @@
           variation according to the shape of the land.<br><br>
           </cb_p>
           <pre><code class="language-javascript">
-          const cellsX = 11;
-          const cellsY = 11;
-          const numTerraces = 2;
-          let heightMap = [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-                            [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
-                            [ 0, 1, 2, 2, 2, 2, 1, 1, 1, 1, 0 ],
-                            [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
-                            [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
-                            [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
-                            [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
-                            [ 0, 1, 2, 3, 3, 2, 2, 2, 2, 1, 0 ],
-                            [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
-                            [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
-                            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ];
-          config.hasBiomes = true;
-          // How much water each cloud will start with.
-          config.rainfall = 30;
-          // Simulate rain coming from the south of the map. In the isometric grid view
-          // that is used, this is the bottom right side of the screen.
-          config.rainDirection = WT.Direction.North;
-          config.wetLimit = 1;
-          config.dryLimit = 0.2;
-          // The height at which the generator won't place trees.
-          config.treeLimit = 4;
+const cellsX = 11;
+const cellsY = 11;
+const numTerraces = 2;
+let heightMap = [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                  [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
+                  [ 0, 1, 2, 2, 2, 2, 1, 1, 1, 1, 0 ],
+                  [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
+                  [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
+                  [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
+                  [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
+                  [ 0, 1, 2, 3, 3, 2, 2, 2, 2, 1, 0 ],
+                  [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
+                  [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
+                  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ];
+config.hasBiomes = true;
+// How much water each cloud will start with.
+config.rainfall = 30;
+// Simulate rain coming from the south of the map. In the isometric grid view
+// that is used, this is the bottom right side of the screen.
+config.rainDirection = WT.Direction.North;
+config.wetLimit = 1;
+config.dryLimit = 0.2;
+// The height at which the generator won't place trees.
+config.treeLimit = 4;
           </code></pre>
           <cb_p>
           This results in a larger island, with some grass tiles with darker green and
           brown patches, representing wet grass and mud respectively. The code is running
-          in the canva below, so use mouse click to move the camera around.<br><br>
+          in the canva below (if your screen is big enough), so use mouse click to move
+          the camera around.<br><br>
           </cb_p>
           <div>
             <canvas id="demoCanvas" oncontextmenu="return false;" width="1140" height="760">

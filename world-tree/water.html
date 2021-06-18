@@ -122,24 +122,24 @@
           and to set a couple of extra parameters in the TerrainBuilderConfig.<br>
           </cb_p>
           <pre><code class="language-javascript">
-            // Add a couple of sprites for the beach and the sea.
-            addGraphic(WT.TerrainType.Sand, WT.TerrainShape.Flat, spriteWidth * 2, 0);
-            addGraphic(WT.TerrainType.Water, WT.TerrainShape.Flat, spriteWidth * 3, 0);
+// Add a couple of sprites for the beach and the sea.
+addGraphic(WT.TerrainType.Sand, WT.TerrainShape.Flat, spriteWidth * 2, 0);
+addGraphic(WT.TerrainType.Water, WT.TerrainShape.Flat, spriteWidth * 3, 0);
 
-            // The minimal configuration parameters that enable water:
-            // - hasWater means that the generator should try to look where water should be.
-            // - waterLine defines the height at which water is considered the only surface.
-            //   So this means a height of zero or less will become a water surface.
-            config.hasWater = true;
-            config.waterLine = 0;
+// The minimal configuration parameters that enable water:
+// - hasWater means that the generator should try to look where water should be.
+// - waterLine defines the height at which water is considered the only surface.
+//   So this means a height of zero or less will become a water surface.
+config.hasWater = true;
+config.waterLine = 0;
 
-            // We've set the waterLine to zero, so create a height map with '0' surrounding
-            // the non-zeros to create a tiny island.
-            let heightMap = [ [ 0, 0, 0, 0, 0 ],
-                              [ 0, 1, 1, 1, 0 ],
-                              [ 0, 1, 2, 1, 0 ],
-                              [ 0, 1, 1, 1, 0 ],
-                              [ 0, 0, 0, 0, 0 ] ];
+// We've set the waterLine to zero, so create a height map with '0' surrounding
+// the non-zeros to create a tiny island.
+let heightMap = [ [ 0, 0, 0, 0, 0 ],
+                   [ 0, 1, 1, 1, 0 ],
+                   [ 0, 1, 2, 1, 0 ],
+                   [ 0, 1, 1, 1, 0 ],
+                   [ 0, 0, 0, 0, 0 ] ];
           </code></pre>
           <cb_h2>Shoreline<br></cb_h2>
           <cb_p>
@@ -154,36 +154,37 @@
           surface tiles, instead.<br><br>
           </cb_p>
           <pre><code class="language-javascript">
-          // Create a new SpriteSheet from the waves.png file.
-          const waveSheet = new WT.SpriteSheet("res/img/waves");
-          // We're going to add graphics for all the shoreline directions.
-          const features = [ WT.TerrainFeature.ShorelineNorth,
-                             WT.TerrainFeature.ShorelineWest,
-                             WT.TerrainFeature.ShorelineEast,
-                             WT.TerrainFeature.ShorelineSouth ];
+// Create a new SpriteSheet from the waves.png file.
+const waveSheet = new WT.SpriteSheet("res/img/waves");
+// We're going to add graphics for all the shoreline directions.
+const features = [ WT.TerrainFeature.ShorelineNorth,
+                   WT.TerrainFeature.ShorelineWest,
+                   WT.TerrainFeature.ShorelineEast,
+                   WT.TerrainFeature.ShorelineSouth ];
 
-          for (let y in features) {
-            let waveSprites = new Array();
-            // 3 frames per ossilating graphic.
-            for (let x = 0; x < 3; x++) {
-              waveSprites.push(new WT.Sprite(waveSheet,
-                                             x * spriteWidth,
-                                             y * spriteHeight,
-                                             spriteWidth, spriteHeight));
-            }
-            // Pass the array of sprites and set the frame time too 500ms.
-            const waves = new WT.OssilateGraphicComponent(waveSprites, 500);
-            const feature = features[y];
-            // Enable the TerrainBuilder to use the graphics.
-            WT.Terrain.addFeatureGraphics(feature, waves);
-          }
+for (let y in features) {
+  let waveSprites = new Array();
+  // 3 frames per ossilating graphic.
+  for (let x = 0; x < 3; x++) {
+    waveSprites.push(new WT.Sprite(waveSheet,
+                                   x * spriteWidth,
+                                   y * spriteHeight,
+                                   spriteWidth, spriteHeight));
+  }
+  // Pass the array of sprites and set the frame time too 500ms.
+  const waves = new WT.OssilateGraphicComponent(waveSprites, 500);
+  const feature = features[y];
+  // Enable the TerrainBuilder to use the graphics.
+  WT.Terrain.addFeatureGraphics(feature, waves);
+}
           </code></pre>
           <cb_p>
           And now we have a little island, with a central rock and with waves lapping onto
           the beach.<br><br>
           </cb_p>
           <cb_p>
-          The code is running in the canva below, so use mouse click to move the camera around.<br><br>
+          The code is running in the canva below (if your screen is large enough), so use mouse click
+          to move the camera around.<br><br>
           </cb_p>
           <div>
             <canvas id="demoCanvas" oncontextmenu="return false;" width="1140" height="760">
