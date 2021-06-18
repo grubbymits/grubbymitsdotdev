@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<meta name="description" content="Adding biomes to the game world">
+<link type="text/css" rel="stylesheet" href="../css/grubbymits.css"/>
+<link type="text/css" rel="stylesheet" href="../css/bootstrap.min.css"  media="screen,projection"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/base16/solarized-dark.min.css" integrity="sha512-JPpsArcPmVD/lHCCuZeG6Kx4x2qURRXHXxKYaXYJiKEKaoLOcXKDYqQ4jSeauXbk+U6uZ1UzrGO85y+lpys0Og==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel='shortcut icon' type='image/x-icon' href='../favicon.ico'>
+<title>World Tree biomes</title>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js" integrity="sha512-W7EehcwtSbRF63FIQlXEOOd5mnq0Et0V0nUOvwcUvjnCKgOLLYbqriQxEQSp63sfrkryxIg/A/O8v8O18QwQCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/javascript.min.js" integrity="sha512-aN2s9TjDSMELiMJg7b24YYNKJxC8nMdL9TzL/t9Yfbiryx1WQCfBgxPQQQYYw6R9b4ehpdQYe2eZCRnvvU972g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js" integrity="sha512-W7EehcwtSbRF63FIQlXEOOd5mnq0Et0V0nUOvwcUvjnCKgOLLYbqriQxEQSp63sfrkryxIg/A/O8v8O18QwQCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/javascript.min.js" integrity="sha512-aN2s9TjDSMELiMJg7b24YYNKJxC8nMdL9TzL/t9Yfbiryx1WQCfBgxPQQQYYw6R9b4ehpdQYe2eZCRnvvU972g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>hljs.highlightAll();</script>
+  <script type="module">
+    import * as WT from "./js/world-tree.js";
+    const spriteWidth = 322;
+    const spriteHeight = 270;
+    const sheet = new WT.SpriteSheet("res/img/basic-outside");
+    const shape = WT.TerrainShape.Flat;
+    function addGraphic(type, offsetX, offsetY) {
+      WT.Terrain.addGraphic(/*terrainType*/type,
+                             /*terrainShape*/shape,
+                             /*spriteSheet*/sheet,
+                             /*coord.x*/offsetX,
+                             /*coord.y*/offsetY,
+                             /*width*/spriteWidth,
+                             /*height*/spriteHeight);
+    }
+    addGraphic(WT.TerrainType.DryGrass, spriteWidth * 2, 0);
+    addGraphic(WT.TerrainType.WetGrass, spriteWidth * 3, 0);
+    addGraphic(WT.TerrainType.Mud, spriteWidth * 4, 0);
+    addGraphic(WT.TerrainType.Sand, spriteWidth * 5, 0);
+    addGraphic(WT.TerrainType.Water, spriteWidth * 6, 0);
+
+    // Add graphical features: Waves.
+    const waveSheet = new WT.SpriteSheet("res/img/waves");
+    const features = [ WT.TerrainFeature.ShorelineNorth,
+                       WT.TerrainFeature.ShorelineWest,
+                       WT.TerrainFeature.ShorelineEast,
+                       WT.TerrainFeature.ShorelineSouth ];
+
+    for (let y in features) {
+      let waveSprites = new Array();
+      for (let x = 0; x < 3; x++) {
+        waveSprites.push(new WT.Sprite(waveSheet,
+                                       x * spriteWidth,
+                                       y * spriteHeight,
+                                       spriteWidth, spriteHeight));
+      }
+      const waves = new WT.OssilateGraphicComponent(waveSprites, 500);
+      const feature = features[y];
+      WT.Terrain.addFeatureGraphics(feature, waves);
+    }
+
+    const cellsX = 11;
+    const cellsY = 11;
+    const numTerraces = 3;
+    let heightMap = [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                      [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
+                      [ 0, 1, 2, 2, 2, 2, 1, 1, 1, 1, 0 ],
+                      [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
+                      [ 0, 1, 2, 3, 3, 4, 3, 2, 2, 1, 0 ],
+                      [ 0, 1, 2, 3, 4, 5, 4, 2, 2, 1, 0 ],
+                      [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
+                      [ 0, 1, 2, 3, 3, 2, 2, 2, 2, 1, 0 ],
+                      [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
+                      [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
+                      [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ];
+
+    window.onload = (event) => {
+      const physicalDims =
+        WT.TwoByOneIsometric.getDimensions(spriteWidth, spriteHeight);
+      const worldDims = new WT.Dimensions(physicalDims.width * cellsX,
+                                          physicalDims.depth * cellsY,
+                                          physicalDims.height * (1 + numTerraces));
+      const config = new WT.TerrainBuilderConfig(numTerraces,
+                                                 WT.TerrainType.DryGrass,
+                                                 WT.TerrainType.DryGrass);
+      config.hasWater = true;
+      config.waterLine = 0;
+      config.hasBiomes = true;
+      config.rainfall = 30;
+      config.rainDirection = WT.Direction.North;
+      config.wetLimit = 1;
+      config.treeLimit = 4;
+      config.dryLimit = 0.2;
+
+      // Use the height map to construct a terrain.
+      let builder = new WT.TerrainBuilder(cellsX, cellsY, heightMap,
+                                          config, physicalDims);
+      let context = new WT.Context(worldDims);
+      builder.generateMap(context);
+      let canvas = document.getElementById("demoCanvas");
+      context.addRenderer(canvas, WT.Perspective.TwoByOneIsometric);
+      let camera = new WT.MouseCamera(context.scene, canvas,
+                                      canvas.width, canvas.height);
+    
+      var update = function update() {
+        if (document.hasFocus()) {
+          context.update(camera);
+        }
+        window.requestAnimationFrame(update);
+      }
+      window.requestAnimationFrame(update);
+    }
+  </script>
+  <div style="background-color:#002B36">
+    <div class="container">
+    <div width="100%" background-position="center"></div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <img class="img-responsive" src="../assets/images/mull.jpeg" alt="island coast">
+        </div>
+      </div>
+      <ul class="breadcrumb">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="./introduction.html">Intro</a></li>
+        <li><a href="./water.html">Water</a></li>
+        <li>Biomes</li>
+      </ul>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <cb_h1>Biomes<br><br></cb_h1>
+          <cb_p>
+          Biomes are the different types of environments that we find in the world, which
+          are defined by their temperature, light, elevation and how much water is around.
+          World Tree creates biomes based upon how much water is in the area and this can
+          be defined by the geometry of the land and how much rain is added, and from what
+          direction the wind blows.<br><br>
+          The following example will build upon the <a href="./water.html">water</a>
+          tutorial where we added basic water and a shoreline.<br><br>
+          </cb_p>
+          <cb_h2>Moisture based biomes<br></cb_h2>
+          <cb_p>
+          As usual, the first in changing the world is providing some more graphics to
+          represent those variations. We're adding some different tiles that will help
+          convey the idea of damper areas and generally greener than the sand and rock
+          that we've previously added.<br><br>
+          </cb_p>
+          <pre><code class="language-javascript">
+          // Add our flat surface tile graphics.
+          const spriteWidth = 322;
+          const spriteHeight = 270;
+          const sheet = new WT.SpriteSheet("res/img/basic-outside");
+          const shape = WT.TerrainShape.Flat;
+          function addGraphic(type, offsetX, offsetY) {
+            WT.Terrain.addGraphic(/*terrainType*/type,
+                                  /*terrainShape*/shape,
+                                  /*spriteSheet*/sheet,
+                                  /*coord.x*/offsetX,
+                                  /*coord.y*/offsetY,
+                                  /*width*/spriteWidth,
+                                  /*height*/spriteHeight);
+          }
+          addGraphic(WT.TerrainType.DryGrass, spriteWidth * 2, 0);
+          addGraphic(WT.TerrainType.WetGrass, spriteWidth * 3, 0);
+          addGraphic(WT.TerrainType.Mud, spriteWidth * 4, 0);
+          addGraphic(WT.TerrainType.Sand, spriteWidth * 5, 0);
+          addGraphic(WT.TerrainType.Water, spriteWidth * 6, 0);
+          </code></pre>
+          <cb_p>
+          We're also going to make the island larger so that we have more space for more
+          variety. We're also going to set the TerrainConfigBuilder to default to DryGrass
+          tiles, which will hopefully make the island more green. The final change is to
+          inform the TerrainBuilder to add biomes to the world and, to make this more
+          realistic, we're also going to simulate rain over the land to add moisture
+          variation according to the shape of the land.<br><br>
+          </cb_p>
+          <pre><code class="language-javascript">
+          const cellsX = 11;
+          const cellsY = 11;
+          const numTerraces = 2;
+          let heightMap = [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                            [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
+                            [ 0, 1, 2, 2, 2, 2, 1, 1, 1, 1, 0 ],
+                            [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
+                            [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
+                            [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
+                            [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
+                            [ 0, 1, 2, 3, 3, 2, 2, 2, 2, 1, 0 ],
+                            [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
+                            [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
+                            [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ];
+          config.hasBiomes = true;
+          // How much water each cloud will start with.
+          config.rainfall = 30;
+          // Simulate rain coming from the south of the map. In the isometric grid view
+          // that is used, this is the bottom right side of the screen.
+          config.rainDirection = WT.Direction.North;
+          config.wetLimit = 1;
+          config.dryLimit = 0.2;
+          // The height at which the generator won't place trees.
+          config.treeLimit = 4;
+          </code></pre>
+          <cb_p>
+          This results in a larger island, with some grass tiles with darker green and
+          brown patches, representing wet grass and mud respectively.<br><br>
+          </cb_p>
+          <div>
+            <canvas id="demoCanvas" oncontextmenu="return false;" width="1140" height="760">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+</body>

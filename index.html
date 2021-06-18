@@ -12,19 +12,25 @@
 <body>
   <div style="background-color:#002B36">
     <div class="container">
-    <div width="100%" background-image="assets/island.jpg" background-position="center"></div>
+    <div width="100%" background-position="center"></div>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <img class="img-responsive" src="assets/images/island.jpg" alt="island">
         </div>
       </div>
+      <ul class="breadcrumb">
+        <li>Home</li>
+        <li><a href="../world-tree/introduction.html">World Tree</a></li>
+        <li><a href="../noisey-world/noisey-islands.html">Noisey World</a></li>
+        <li><a href="../dungen/start.html">Dungen</a></li>
+      </ul>
       <div class="row">
         <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
           <cb_h1>Projects<br><br></cb_h1>
           <cb_h2>World Tree<br></cb_h2>
           <cb_p>
           My latest attempt at working with procedurally generated worlds, but
-          this time as a library. I learnt quite a bit from noisey-world and
+          this time as an engine. I learnt quite a bit from noisey-world and
           from Game Programming Patterns, so this project actually feels quite
           well organised after having some design go into it! I also finally
           took a look at TypeScript and I regret not doing so earlier!<br><br>
@@ -42,6 +48,8 @@
           generate a world using just a single sprite, but the worlds look much
           better when having at least two so that walls and floors are better
           defined.<br><br>
+          I've put together some tutorials to cover the current features
+          <a href="world-tree/introduction.html">here</a>.<br><br>
           </cb_p>
 
           <cb_h2>Noisey World<br></cb_h2>
@@ -55,32 +63,6 @@
           I didn't port it to be a webapp, but pre-generated examples of the islands
           can be found <a href='noisey-world/noisey-islands.html'>here</a>.
 	  <br><br>
-          My first attempt at a procedurally generated was just some brute
-          force thing that I created for Dungen. What I really wanted to do
-          was to try to create a outside world - I find those types of games
-          far more appealing. I quickly stumbled upon the procedural generation
-          <a href="https://www.reddit.com/r/proceduralgeneration/"> sub</a> and,
-          like every other noob, got excited about Perlin noise.<br><br>
-          I wanted to restrict myself to a 2D world and create something that
-          looks something like the glorious British Isles: Scotland and Suffolk
-          in particular... I took some resources from Kenney, made a load
-          of modifications, and read through Amit Patel's
-          <a href="https://www.redblobgames.com/maps/terrain-from-noise/">
-          tutorial</a>. Making a 2D map with different 'heights' is something
-  	  that I've never concerned myself with before. But I can remember the
-	  joy of Zelda and Pokemon on the GameBoy - so the map is
-	  constructed to look like those games: terraces where the character
-	  would traverse them from the side facing the player.
-          <br><br>
-	  I quite like Go, for me it feels like scripting with C.
-	  It was useful to have standard library for image manipulation and
-	  though Go is designed for concurrency, it wasn't difficult to run
-	  multiple threads across multiple cores simultaneously too. The
-	  drawbacks, similar to C, are having to write boiler code for anything
-	  algorithmic! Package management is also a bit odd... but it seems both
-	  dependencies and generics are something that are being addressed. I
-	  really don't understand how/why these were overlooked before. Or why
-	  the official compiler doesn't make use of GCC or LLVM...<br><br>
           </cb_p>
 
           <cb_h2>Dungen<br></cb_h2>

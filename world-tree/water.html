@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<meta name="description" content="Adding water to the game world">
+<link type="text/css" rel="stylesheet" href="../css/grubbymits.css"/>
+<link type="text/css" rel="stylesheet" href="../css/bootstrap.min.css"  media="screen,projection"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/base16/solarized-dark.min.css" integrity="sha512-JPpsArcPmVD/lHCCuZeG6Kx4x2qURRXHXxKYaXYJiKEKaoLOcXKDYqQ4jSeauXbk+U6uZ1UzrGO85y+lpys0Og==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel='shortcut icon' type='image/x-icon' href='../favicon.ico'>
+<title>World Tree water</title>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js" integrity="sha512-W7EehcwtSbRF63FIQlXEOOd5mnq0Et0V0nUOvwcUvjnCKgOLLYbqriQxEQSp63sfrkryxIg/A/O8v8O18QwQCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/javascript.min.js" integrity="sha512-aN2s9TjDSMELiMJg7b24YYNKJxC8nMdL9TzL/t9Yfbiryx1WQCfBgxPQQQYYw6R9b4ehpdQYe2eZCRnvvU972g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js" integrity="sha512-W7EehcwtSbRF63FIQlXEOOd5mnq0Et0V0nUOvwcUvjnCKgOLLYbqriQxEQSp63sfrkryxIg/A/O8v8O18QwQCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/javascript.min.js" integrity="sha512-aN2s9TjDSMELiMJg7b24YYNKJxC8nMdL9TzL/t9Yfbiryx1WQCfBgxPQQQYYw6R9b4ehpdQYe2eZCRnvvU972g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>hljs.highlightAll();</script>
+  <script type="module">
+    import * as WT from "./js/world-tree.js";
+    const spriteWidth = 322;
+    const spriteHeight = 270;
+    const sheet = new WT.SpriteSheet("res/img/basic-dungeon");
+    function addGraphic(type, shape, offsetX, offsetY) {
+      WT.Terrain.addGraphic(/*terrainType*/type,
+                             /*terrainShape*/shape,
+                             /*spriteSheet*/sheet,
+                             /*coord.x*/offsetX,
+                             /*coord.y*/offsetY,
+                             /*width*/spriteWidth,
+                             /*height*/spriteHeight);
+    }
+    addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Flat, 0, 0);
+    addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Wall, spriteWidth, 0);
+    addGraphic(WT.TerrainType.Sand, WT.TerrainShape.Flat, spriteWidth * 2, 0);
+    addGraphic(WT.TerrainType.Water, WT.TerrainShape.Flat, spriteWidth * 3, 0);
+
+    // Add graphical features: Waves.
+    const waveSheet = new WT.SpriteSheet("res/img/waves");
+    const features = [ WT.TerrainFeature.ShorelineNorth,
+                       WT.TerrainFeature.ShorelineWest,
+                       WT.TerrainFeature.ShorelineEast,
+                       WT.TerrainFeature.ShorelineSouth ];
+
+    for (let y in features) {
+      let waveSprites = new Array();
+      for (let x = 0; x < 3; x++) {
+        waveSprites.push(new WT.Sprite(waveSheet,
+                                       x * spriteWidth,
+                                       y * spriteHeight,
+                                       spriteWidth, spriteHeight));
+      }
+      const waves = new WT.OssilateGraphicComponent(waveSprites, 500);
+      const feature = features[y];
+      WT.Terrain.addFeatureGraphics(feature, waves);
+    }
+
+    // 5x5 area with a wall around the edge.
+    const cellsX = 5;
+    const cellsY = 5;
+    const numTerraces = 1;
+    let heightMap = [ [ 0, 0, 0, 0, 0 ],
+                      [ 0, 1, 1, 1, 0 ],
+                      [ 0, 1, 2, 1, 0 ],
+                      [ 0, 1, 1, 1, 0 ],
+                      [ 0, 0, 0, 0, 0 ] ];
+
+    window.onload = (event) => {
+      const physicalDims =
+        WT.TwoByOneIsometric.getDimensions(spriteWidth, spriteHeight);
+      const worldDims = new WT.Dimensions(physicalDims.width * cellsX,
+                                          physicalDims.depth * cellsY,
+                                          physicalDims.height * (1 + numTerraces));
+      const config = new WT.TerrainBuilderConfig(numTerraces,
+                                                 WT.TerrainType.Rock,
+                                                 WT.TerrainType.Rock);
+      config.hasWater = true;
+      config.waterLine = 0;
+      // Use the height map to construct a terrain.
+      let builder = new WT.TerrainBuilder(cellsX, cellsY, heightMap,
+                                          config, physicalDims);
+      let context = new WT.Context(worldDims);
+      builder.generateMap(context);
+      let canvas = document.getElementById("demoCanvas");
+      context.addRenderer(canvas, WT.Perspective.TwoByOneIsometric);
+      let camera = new WT.MouseCamera(context.scene, canvas,
+                                      canvas.width, canvas.height);
+    
+      var update = function update() {
+        if (document.hasFocus()) {
+          context.update(camera);
+        }
+        window.requestAnimationFrame(update);
+      }
+      window.requestAnimationFrame(update);
+    }
+  </script>
+  <div style="background-color:#002B36">
+    <div class="container">
+    <div width="100%" background-position="center"></div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <img class="img-responsive" src="../assets/images/mull.jpeg" alt="island coast">
+        </div>
+      </div>
+      <ul class="breadcrumb">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="./introduction.html">Intro</a></li>
+        <li>Water</li>
+        <li><a href="./biomes.html">Biomes</a></li>
+      </ul>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <cb_h1>Adding water<br><br></cb_h1>
+          <cb_p>
+          Carrying on from the example in the introduction, we're going to cover how to
+          add water to world by creating ourselves an island.<br><br>
+          </cb_p>
+          <cb_h2>Water as a terrain surface<br></cb_h2>
+          <cb_p>
+          Adding water to a world is as simple as supplying a sprite to represent it,
+          and to set a couple of extra parameters in the TerrainBuilderConfig.<br>
+          </cb_p>
+          <pre><code class="language-javascript">
+            // Add a couple of sprites for the beach and the sea.
+            addGraphic(WT.TerrainType.Sand, WT.TerrainShape.Flat, spriteWidth * 2, 0);
+            addGraphic(WT.TerrainType.Water, WT.TerrainShape.Flat, spriteWidth * 3, 0);
+
+            // The minimal configuration parameters that enable water:
+            // - hasWater means that the generator should try to look where water should be.
+            // - waterLine defines the height at which water is considered the only surface.
+            //   So this means a height of zero or less will become a water surface.
+            config.hasWater = true;
+            config.waterLine = 0;
+
+            // We've set the waterLine to zero, so create a height map with '0' surrounding
+            // the non-zeros to create a tiny island.
+            let heightMap = [ [ 0, 0, 0, 0, 0 ],
+                              [ 0, 1, 1, 1, 0 ],
+                              [ 0, 1, 2, 1, 0 ],
+                              [ 0, 1, 1, 1, 0 ],
+                              [ 0, 0, 0, 0, 0 ] ];
+          </code></pre>
+          <cb_h2>Shoreline<br></cb_h2>
+          <cb_p>
+          We can also add graphics for TerrainFeatures, in this case we're adding some to
+          represent the shoreline. These graphics will be drawn on top on the beach tiles
+          which are adjacent to the water tiles. The following example also introduces a
+          new type of graphic, the 'OssilateGraphicComponent', which uses multiple sprites
+          to produce a sequence animation and will reverse the draw order once the sequence
+          has ended. This graphic will then loop endlessly.<br><br>
+          The TerrainFeature graphics need not be animated, we could have used
+          StaticGraphicComponent objects, which is what the TerrainBuilder is using for the
+          surface tiles, instead.<br><br>
+          </cb_p>
+          <pre><code class="language-javascript">
+          // Create a new SpriteSheet from the waves.png file.
+          const waveSheet = new WT.SpriteSheet("res/img/waves");
+          // We're going to add graphics for all the shoreline directions.
+          const features = [ WT.TerrainFeature.ShorelineNorth,
+                             WT.TerrainFeature.ShorelineWest,
+                             WT.TerrainFeature.ShorelineEast,
+                             WT.TerrainFeature.ShorelineSouth ];
+
+          for (let y in features) {
+            let waveSprites = new Array();
+            // 3 frames per ossilating graphic.
+            for (let x = 0; x < 3; x++) {
+              waveSprites.push(new WT.Sprite(waveSheet,
+                                             x * spriteWidth,
+                                             y * spriteHeight,
+                                             spriteWidth, spriteHeight));
+            }
+            // Pass the array of sprites and set the frame time too 500ms.
+            const waves = new WT.OssilateGraphicComponent(waveSprites, 500);
+            const feature = features[y];
+            // Enable the TerrainBuilder to use the graphics.
+            WT.Terrain.addFeatureGraphics(feature, waves);
+          }
+          </code></pre>
+          <cb_p>
+          And now we have a little island, with a central rock and with waves lapping onto
+          the beach.<br><br>
+          </cb_p>
+          <div>
+            <canvas id="demoCanvas" oncontextmenu="return false;" width="1140" height="760">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+</body>
