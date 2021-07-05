@@ -1,0 +1,3 @@
+[submodule "world-tree/demos"]
+	path = world-tree/demos
+	url = https://github.com/grubbymits/world-tree-demos.git

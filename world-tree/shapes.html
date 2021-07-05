@@ -2,12 +2,12 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width">
-<meta name="description" content="Adding biomes to the game world">
+<meta name="description" content="Adding terrain shapes to the game world">
 <link type="text/css" rel="stylesheet" href="../css/grubbymits.css"/>
 <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" media="screen,projection"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/base16/solarized-dark.min.css" integrity="sha512-JPpsArcPmVD/lHCCuZeG6Kx4x2qURRXHXxKYaXYJiKEKaoLOcXKDYqQ4jSeauXbk+U6uZ1UzrGO85y+lpys0Og==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel='shortcut icon' type='image/x-icon' href='../favicon.ico'>
-<title>World Tree biomes</title>
+<title>World Tree terrain shapes</title>
 </head>
 <body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js" integrity="sha512-W7EehcwtSbRF63FIQlXEOOd5mnq0Et0V0nUOvwcUvjnCKgOLLYbqriQxEQSp63sfrkryxIg/A/O8v8O18QwQCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -29,9 +29,21 @@
       WT.TerrainType.Sand,
       WT.TerrainType.Water,
     ];
+    const tileColumns = [
+      WT.TerrainShape.Flat,
+      WT.TerrainShape.RampUpSouth,
+      WT.TerrainShape.RampUpWest,
+      WT.TerrainShape.RampUpEast,
+      WT.TerrainShape.RampUpNorth,
+      WT.TerrainShape.Wall,
+      WT.TerrainShape.FlatAloneOut,
+      WT.TerrainShape.FlatWestOut,
+      WT.TerrainShape.FlatSouthOut,
+      WT.TerrainShape.FlatSouthWest,
+    ];
 
     function addGraphic(column, row) {
-      const shape = WT.TerrainShape.Flat;
+      const shape = tileColumns[column];
       const type = tileRows[row];
       WT.Terrain.addGraphic(/*terrainType*/type,
                              /*terrainShape*/shape,
@@ -43,7 +55,14 @@
     }
 
     for (let row in tileRows) {
-      addGraphic(/*column*/0, row);
+      if (tileRows[row] == WT.TerrainType.Sand || tileRows[row] == WT.TerrainType.Water) {
+        // Only supporting flat water and sand tiles.
+        addGraphic(tileColumns[0], row);
+        continue;
+      }
+      for (let column in tileColumns) {
+        addGraphic(column, row);
+      }
     }
 
     // Add graphical features: Waves.
@@ -74,7 +93,7 @@
                       [ 0, 1, 2, 2, 2, 2, 1, 1, 1, 1, 0 ],
                       [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
                       [ 0, 1, 2, 3, 3, 4, 3, 2, 2, 1, 0 ],
-                      [ 0, 1, 2, 3, 4, 5, 4, 2, 2, 1, 0 ],
+                      [ 0, 1, 2, 3, 4, 6, 4, 2, 2, 1, 0 ],
                       [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
                       [ 0, 1, 2, 3, 3, 2, 2, 2, 2, 1, 0 ],
                       [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
@@ -93,6 +112,7 @@
       config.hasWater = true;
       config.waterLine = 0;
       config.hasBiomes = true;
+      config.hasRamps = true;
       config.rainfall = 30;
       config.rainDirection = WT.Direction.North;
       config.wetLimit = 1;
@@ -123,7 +143,7 @@
     <div width="100%" background-position="center"></div>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <img class="img-fluid" src="../assets/images/skye-sgurr-lake.jpeg" alt="island coast">
+          <img class="img-fluid" src="../assets/images/skye-sgurr.jpeg" alt="island coast">
         </div>
       </div>
       <nav aria-label="breadcrumb">
@@ -131,34 +151,24 @@
           <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
           <li class="breadcrumb-item"><a href="./introduction.html">Intro</a></li>
           <li class="breadcrumb-item"><a href="./water.html">Water</a></li>
-          <li class="breadcrumb-item active">Biomes</li>
-          <li class="breadcrumb-item"><a href="./shapes.html">Shapes</a></li>
+          <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
+          <li class="breadcrumb-item active">Shapes</li>
         </ol>
         </nav>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <cb_h1>Biomes<br><br></cb_h1>
+          <cb_h1>Terrain Shapes<br><br></cb_h1>
           <cb_p>
-          Biomes are the different types of environments that we find in the world, which
-          are defined by their temperature, light, elevation and how much water is around.
-          World Tree creates biomes based upon how much water is in the area and this can
-          be defined by the geometry of the land and how much rain is added, and from what
-          direction the wind blows.<br><br>
-          The following example will build upon the <a href="./water.html">water</a>
-          tutorial where we added basic water and a shoreline.<br><br>
-          </cb_p>
-          <cb_h2>Moisture based biomes<br></cb_h2>
-          <cb_p>
-          As usual, the first in changing the world is providing some more graphics to
-          represent those variations. We're adding some different tiles that will help
-          convey the idea of damper areas and generally greener than the sand and rock
-          that we've previously added.<br><br>
+          We're going to enable several different shapes in our terrain, other than the
+          flat floor and wall tiles that we've added so far. We're going to add four ramps,
+          one for each direction, and we'll also add four more tiles for the 'cliff' edges
+          of the terraces.<br><br>
           </cb_p>
           <pre><code class="language-javascript">
-// Add our flat surface tile graphics.
 const spriteWidth = 322;
 const spriteHeight = 270;
 const sheet = new WT.SpriteSheet("res/img/outside-terrain-tiles");
+// Our terrain types.
 const tileRows = [
   WT.TerrainType.Rock,
   WT.TerrainType.DryGrass,
@@ -167,9 +177,22 @@ const tileRows = [
   WT.TerrainType.Sand,
   WT.TerrainType.Water,
 ];
+// All the shapes that we're going to support.
+const tileColumns = [
+  WT.TerrainShape.Flat,
+  WT.TerrainShape.RampUpSouth,
+  WT.TerrainShape.RampUpWest,
+  WT.TerrainShape.RampUpEast,
+  WT.TerrainShape.RampUpNorth,
+  WT.TerrainShape.Wall,
+  WT.TerrainShape.FlatAloneOut,   // Has no connecting terrain.
+  WT.TerrainShape.FlatWestOut,    // Only has terrain to the east.
+  WT.TerrainShape.FlatSouthOut,   // Only has terrain to the north.
+  WT.TerrainShape.FlatSouthWest,  // Only has terrain to the north and east.
+];
 
 function addGraphic(column, row) {
-  const shape = WT.TerrainShape.Flat;
+  const shape = tileColumns[column];
   const type = tileRows[row];
   WT.Terrain.addGraphic(/*terrainType*/type,
                         /*terrainShape*/shape,
@@ -181,33 +204,45 @@ function addGraphic(column, row) {
 }
 
 for (let row in tileRows) {
-  addGraphic(/*column*/0, row);
+  if (tileRows[row] == WT.TerrainType.Sand || tileRows[row] == WT.TerrainType.Water) {
+    // Only supporting flat water and sand tiles.
+    addGraphic(tileColumns[0], row);
+    continue;
+  }
+  for (let column in tileColumns) {
+    addGraphic(column, row);
+  }
 }
           </code></pre>
           <cb_p>
-          We're also going to make the island larger so that we have more space for more
-          variety. We're also going to set the TerrainConfigBuilder to default to DryGrass
-          tiles, which will hopefully make the island more green. The final change is to
-          inform the TerrainBuilder to add biomes to the world and, to make this more
-          realistic, we're also going to simulate rain over the land to add moisture
-          variation according to the shape of the land.<br><br>
+          The TerrainBuilder will automatically add edge tiles into the map if the correct
+          sprites have been provided; however, we need to explicitly specify adding ramp
+          terrain shapes. The location of a ramp is determined by the height map:<br>
+          - The TerrainBuilder will find a location that is the exact mid-point between two
+          terrace heights.<br>
+          - It will then attempt to convert the, directly, adjacent tiles into a ramp.<br>
+          - The only restriction on whether a tile becomes a ramp is that the new ramp will
+          lead to flat terrain tile (we don't want ramps to a cliff or into the air!)
+          <br><br>
           </cb_p>
           <pre><code class="language-javascript">
 const cellsX = 11;
 const cellsY = 11;
-const numTerraces = 2;
+const numTerraces = 3;
 let heightMap = [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
                   [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
                   [ 0, 1, 2, 2, 2, 2, 1, 1, 1, 1, 0 ],
                   [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
-                  [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
-                  [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
+                  [ 0, 1, 2, 3, 3, 4, 3, 2, 2, 1, 0 ],
+                  [ 0, 1, 2, 3, 4, 6, 4, 2, 2, 1, 0 ],
                   [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
                   [ 0, 1, 2, 3, 3, 2, 2, 2, 2, 1, 0 ],
                   [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
                   [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
                   [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ];
 config.hasBiomes = true;
+// Enable ramps
+config.hasRamps = true;
 // How much water each cloud will start with.
 config.rainfall = 30;
 // Simulate rain coming from the south of the map. In the isometric grid view
@@ -219,8 +254,9 @@ config.dryLimit = 0.2;
 config.treeLimit = 4;
           </code></pre>
           <cb_p>
-          This results in a larger island, with some grass tiles with darker green and
-          brown patches, representing wet grass and mud respectively. The code is running
+          Our island with biomes and shoreline now has more detail in the cliff edges and ramps
+          join up the terraces.
+          The code is running
           in the canva below (if your screen is big enough), so use mouse click to move
           the camera around.<br><br>
           </cb_p>

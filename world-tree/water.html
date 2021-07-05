@@ -109,6 +109,7 @@
           <li class="breadcrumb-item"><a href="./introduction.html">Intro</a></li>
           <li class="breadcrumb-item active">Water</li>
           <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
+          <li class="breadcrumb-item"><a href="./shapes.html">Shapes</a></li>
         </ol>
       </nav>
       <div class="row">
@@ -128,6 +129,8 @@
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <pre><code class="language-javascript">
+addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Flat, 0, 0);
+addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Wall, spriteWidth, 0);
 // Add a couple of sprites for the beach and the sea.
 addGraphic(WT.TerrainType.Sand, WT.TerrainShape.Flat, spriteWidth * 2, 0);
 addGraphic(WT.TerrainType.Water, WT.TerrainShape.Flat, spriteWidth * 3, 0);
@@ -142,10 +145,10 @@ config.waterLine = 0;
 // We've set the waterLine to zero, so create a height map with '0' surrounding
 // the non-zeros to create a tiny island.
 let heightMap = [ [ 0, 0, 0, 0, 0 ],
-                   [ 0, 1, 1, 1, 0 ],
-                   [ 0, 1, 2, 1, 0 ],
-                   [ 0, 1, 1, 1, 0 ],
-                   [ 0, 0, 0, 0, 0 ] ];
+                  [ 0, 1, 1, 1, 0 ],
+                  [ 0, 1, 2, 1, 0 ],
+                  [ 0, 1, 1, 1, 0 ],
+                  [ 0, 0, 0, 0, 0 ] ];
           </code></pre>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { EntityEvent } from "./events.js";
-import { Direction, BoundingCuboid, CollisionDetector } from "./physics.js";
+import { BoundingCuboid, CollisionDetector } from "./physics.js";
 import { Vector3D } from "./geometry.js";
 export class Action {
     constructor(_actor) {
@@ -12,57 +12,37 @@ class MoveAction extends Action {
     constructor(actor) {
         super(actor);
     }
-    canMove(from, to) {
+    obstructed(from, to, maxAngle) {
         let bounds = this._actor.bounds;
         let path = to.vec(from);
         let area = new BoundingCuboid(to, bounds.dimensions);
         area.insert(bounds);
-        return !CollisionDetector.detectInArea(this._actor, path, area);
+        return CollisionDetector.detectInArea(this._actor, path, maxAngle, area);
     }
     perform() { return true; }
 }
 export class MoveDirection extends MoveAction {
-    constructor(actor, _d, _bounds) {
+    constructor(actor, _d, _maxAngle, _bounds) {
         super(actor);
         this._d = _d;
+        this._maxAngle = _maxAngle;
         this._bounds = _bounds;
     }
     perform() {
         const currentPos = this.actor.bounds.bottomCentre;
         const nextPos = currentPos.add(this._d);
-        if (this.canMove(currentPos, nextPos)) {
+        const obstruction = this.obstructed(currentPos, nextPos, this._maxAngle);
+        if (obstruction == null) {
             this.actor.updatePosition(this._d);
-            this.actor.postEvent(EntityEvent.Moving);
             return false;
         }
-        this.actor.postEvent(EntityEvent.EndMove);
-        return true;
-    }
-}
-export class MoveForwardsDirection extends MoveDirection {
-    constructor(actor, d, bounds) {
-        super(actor, d, bounds);
-        if (d.y < 0 && d.y < d.x) {
-            this._direction = Direction.North;
+        if (obstruction.blocking) {
+            this.actor.postEvent(EntityEvent.EndMove);
+            return true;
         }
-        else if (d.x > d.y && d.x > 0) {
-            this._direction = Direction.East;
-        }
-        else if (d.y > 0 && d.y > d.x) {
-            this._direction = Direction.South;
-        }
-        else if (d.x < 0 && d.x < d.y) {
-            this._direction = Direction.West;
-        }
-        else {
-            console.log("Unhandled direction to face");
-            console.log("dx:", d.x, "dy:", d.y);
-        }
-    }
-    perform() {
-        this.actor.postEvent(EntityEvent.FaceDirection);
-        this.actor.direction = this._direction;
-        return super.perform();
+        console.log("adjusting movement with max angle");
+        this.actor.updatePosition(this._d.add(this._maxAngle));
+        return false;
     }
 }
 export class MoveDestination extends MoveAction {
