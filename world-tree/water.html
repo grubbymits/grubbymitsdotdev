@@ -17,10 +17,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/javascript.min.js" integrity="sha512-aN2s9TjDSMELiMJg7b24YYNKJxC8nMdL9TzL/t9Yfbiryx1WQCfBgxPQQQYYw6R9b4ehpdQYe2eZCRnvvU972g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>hljs.highlightAll();</script>
   <script type="module">
-    import * as WT from "./js/world-tree.js";
+    import * as WT from "./demos/lib/world-tree.js";
     const spriteWidth = 322;
     const spriteHeight = 270;
-    const sheet = new WT.SpriteSheet("res/img/basic-dungeon");
+    const sheet = new WT.SpriteSheet("demos/graphics/png/basic-dungeon");
     function addGraphic(type, shape, offsetX, offsetY) {
       WT.Terrain.addGraphic(/*terrainType*/type,
                              /*terrainShape*/shape,
@@ -36,7 +36,7 @@
     addGraphic(WT.TerrainType.Water, WT.TerrainShape.Flat, spriteWidth * 3, 0);
 
     // Add graphical features: Waves.
-    const waveSheet = new WT.SpriteSheet("res/img/waves");
+    const waveSheet = new WT.SpriteSheet("./demos/graphics/png/waves");
     const features = [ WT.TerrainFeature.ShorelineNorth,
                        WT.TerrainFeature.ShorelineWest,
                        WT.TerrainFeature.ShorelineEast,
@@ -79,10 +79,9 @@
       // Use the height map to construct a terrain.
       let builder = new WT.TerrainBuilder(cellsX, cellsY, heightMap,
                                           config, physicalDims);
-      let context = new WT.Context(worldDims);
-      builder.generateMap(context);
       let canvas = document.getElementById("demoCanvas");
-      context.addRenderer(canvas, WT.Perspective.TwoByOneIsometric);
+      let context = WT.createContext(canvas, worldDims, WT.Perspective.TwoByOneIsometric);
+      builder.generateMap(context);
       let camera = new WT.MouseCamera(context.scene, canvas,
                                       canvas.width, canvas.height);
     
