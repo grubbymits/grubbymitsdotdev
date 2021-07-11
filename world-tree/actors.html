@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<meta name="description" content="Adding actor to the game world">
+<link type="text/css" rel="stylesheet" href="../css/grubbymits.css"/>
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" media="screen,projection"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/base16/solarized-dark.min.css" integrity="sha512-JPpsArcPmVD/lHCCuZeG6Kx4x2qURRXHXxKYaXYJiKEKaoLOcXKDYqQ4jSeauXbk+U6uZ1UzrGO85y+lpys0Og==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel='shortcut icon' type='image/x-icon' href='../favicon.ico'>
+<title>World Tree Actors</title>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js" integrity="sha512-W7EehcwtSbRF63FIQlXEOOd5mnq0Et0V0nUOvwcUvjnCKgOLLYbqriQxEQSp63sfrkryxIg/A/O8v8O18QwQCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/javascript.min.js" integrity="sha512-aN2s9TjDSMELiMJg7b24YYNKJxC8nMdL9TzL/t9Yfbiryx1WQCfBgxPQQQYYw6R9b4ehpdQYe2eZCRnvvU972g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js" integrity="sha512-W7EehcwtSbRF63FIQlXEOOd5mnq0Et0V0nUOvwcUvjnCKgOLLYbqriQxEQSp63sfrkryxIg/A/O8v8O18QwQCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/javascript.min.js" integrity="sha512-aN2s9TjDSMELiMJg7b24YYNKJxC8nMdL9TzL/t9Yfbiryx1WQCfBgxPQQQYYw6R9b4ehpdQYe2eZCRnvvU972g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>hljs.highlightAll();</script>
+  <script type="module" src="./demos/actor.js"></script>
+  <div style="background-color:#002B36">
+    <div class="container">
+    <div width="100%" background-position="center"></div>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <img class="img-fluid" src="../assets/images/cali-sea-anemone.jpeg" alt="island coast">
+        </div>
+      </div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="./introduction.html">Intro</a></li>
+          <li class="breadcrumb-item"><a href="./water.html">Water</a></li>
+          <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
+          <li class="breadcrumb-item"><a href="./shapes.html">Shapes</a></li>
+          <li class="breadcrumb-item active">Actors</li>
+        </ol>
+        </nav>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <cb_h1>Actors<br><br></cb_h1>
+          <cb_p>
+          Actors are how we add entities into the world that can perform actions, which means
+          that for each iteration of the game loop it is offered the chance to update itself.
+          This is different, of course, to the terrain which the world is made from. This
+          tutorial will cover adding an Actor into a world and enabling it to move around.
+          <br><br>
+          </cb_p>
+          <cb_h2>Movement<br></cb_h2>
+          <cb_p>
+          We could just add a single sprite to represent our actor, a robot of sorts, but we're
+          going to add a sprite for each of the directions that it can face, four, and we'll
+          collect these together using a 'DirectionalGraphicComponent'. This is a structure
+          which holds sprites for supported directions (the way the sprite is facing) and a
+          variable to hold the current direction.<br><br>
+          We setup all this up in a 'Droid' class which extends from Actor. This is important
+          since it means that the components in World Tree that need to know about potential
+          changes, will automatically be updated. Plus it means that the engine will give the
+          Droid an opportunity to update itself, make a move in our example.
+          <br><br>
+          </cb_p>
+          <pre><code class="language-javascript">
+class Droid extends WT.Actor {
+  static sheet = new WT.SpriteSheet("demos/graphics/png/levitate-droid");
+  static directions = [ WT.Direction.West,
+                        WT.Direction.South,
+                        WT.Direction.East,
+                        WT.Direction.North ];
+  static sprites = new Array();
+  static spriteWidth = 58;
+  static spriteHeight = 107;
+  static dims =
+    WT.TwoByOneIsometric.getDimensions(this.spriteWidth, this.spriteHeight);
+    
+  static initGraphics() {
+    this.staticGraphics = new Map();
+    for (let x in this.directions) {
+      let direction = this.directions[x];
+      let sprite = new WT.Sprite(this.sheet, x * this.spriteWidth, 0,
+                                 this.spriteWidth, this.spriteHeight);
+      let graphic = new WT.StaticGraphicComponent(sprite.id);
+      this.staticGraphics.set(direction, graphic);
+    }
+  }
+
+  constructor(context, position) {
+    super(context, position, Droid.dims);
+    let graphics = new WT.DirectionalGraphicComponent(Droid.staticGraphics);
+    // A method inherited from Actor for initialising the graphics used to
+    // represent it.
+    this.addGraphic(graphics);
+
+    // If anything changes the direction in which the droid faces, update the
+    // directional graphics.
+    this.addEventListener(WT.EntityEvent.FaceDirection, () =>
+      graphics.direction = this.direction
+    );
+
+    // Move along either the x or y axis, choosing values between: -1, 0, 1
+    let moveRandomDirection = () => {
+      let dx = Math.round(Math.random() * 2) - 1;
+      let dy = 0;
+      let dz = 0;
+      if (dx == 0) {
+        dy = Math.round(Math.random() * 2) - 1;
+      }
+      if (dx == 0 && dy == 0) {
+        dy = 1;
+      }
+      // The vector that describes how the droid moves.
+      let moveVector = new WT.Vector3D(dx, dy, dz);
+      // Use the vector to get a rough compass direction of movement. Setting this
+      // will trigger our EntityEvent.FaceDirection handler.
+      this.direction = WT.getDirectionFromVector(moveVector);
+      // Ignore this for now...
+      let maxAngle = new WT.Vector3D(0, 0, 0);
+      // An Actor has an 'Action' member variable that will be performed on each
+      // update of the game loop, until completed or unable to complete.
+      this.action = new WT.MoveDirection(this, moveVector, maxAngle, context.bounds);
+    };
+
+    // Choose another direction when it can't move anymore. The MoveDirection Action
+    // will post this event when it completes.
+    this.addEventListener(WT.EntityEvent.EndMove, moveRandomDirection);
+    // Initialise movement.
+    moveRandomDirection();
+  }
+}
+          </code></pre>
+          <cb_p>
+          So the code above demostrates all that is needed to get some actors into a
+          world, most of the code is just creating loading Sprites and organising them
+          into GraphicalComponents. Now, the only extra step to take is to make an
+          instance of Droid and place it somewhere in our world and create a camera
+          to follow it.<br>
+          </cb_p>
+          <pre><code class="language-javascript">
+window.onload = (event) => {
+  // Create a Context, canvas and setup the world as usual...
+  // ...
+  // Call the static method to setup graphics to all potential instances of Droid.
+  Droid.initGraphics();
+  // Place the droid in the middle of the map. 
+  let droidPosition = new WT.Point3D(Math.floor(worldDims.width / 2),
+                                     Math.floor(worldDims.depth / 2),
+                                     Math.floor(physicalDims.height + 1));
+  var droid = new Droid(context, droidPosition); 
+  // The TrackerCamera will automatically set the centre of the screen on the given
+  // entity, which means we can always see the Droid as it moves around the world.
+  let camera = new WT.TrackerCamera(context.scene,
+                                    canvas.width, canvas.height,
+                                    droid);
+          </code></pre>
+          <cb_p>
+          The code is running
+          in the canva below (if your screen is big enough), so use mouse click to move
+          the camera around.<br><br>
+          </cb_p>
+          <div class="d-none d-sm-block">
+            <canvas id="demoCanvas" oncontextmenu="return false;" width="1140" height="760">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+</body>
