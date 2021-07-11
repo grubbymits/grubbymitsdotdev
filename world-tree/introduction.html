@@ -154,14 +154,14 @@
           </cb_p>
           <pre><code class="language-javascript">
 // A Javascript module imports from the engine.
-import * as WT from "./js/world-tree.js";
+import * as WT from "./demos/lib/world-tree.js";
 // Specify the size, in the number of pixels, of the rectangular sprite. X-axis
 // is width, while height in the y-axis.
 const spriteWidth = 322;
 const spriteHeight = 270;
 // Create a new sprite sheet from the image located at the given location. The
 // '.png' extension will automatically be added.
-const sheet = new WT.SpriteSheet("res/img/basic-dungeon");
+const sheet = new WT.SpriteSheet("./demos/graphics/png/basic-dungeon");
 function addGraphic(type, shape, offsetX, offsetY) {
   WT.Terrain.addGraphic(/*terrainType*/type,
                         /*terrainShape*/shape,
