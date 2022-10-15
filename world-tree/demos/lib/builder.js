@@ -6,12 +6,18 @@ import { Point2D } from "./geometry.js";
 export var Biome;
 (function (Biome) {
     Biome[Biome["Water"] = 0] = "Water";
-    Biome[Biome["Beach"] = 1] = "Beach";
-    Biome[Biome["Marshland"] = 2] = "Marshland";
-    Biome[Biome["Grassland"] = 3] = "Grassland";
-    Biome[Biome["Woodland"] = 4] = "Woodland";
-    Biome[Biome["Tundra"] = 5] = "Tundra";
-    Biome[Biome["Desert"] = 6] = "Desert";
+    Biome[Biome["Desert"] = 1] = "Desert";
+    Biome[Biome["Grassland"] = 2] = "Grassland";
+    Biome[Biome["Shrubland"] = 3] = "Shrubland";
+    Biome[Biome["MoistForest"] = 4] = "MoistForest";
+    Biome[Biome["WetForest"] = 5] = "WetForest";
+    Biome[Biome["RainForest"] = 6] = "RainForest";
+    Biome[Biome["Rock"] = 7] = "Rock";
+    Biome[Biome["Tundra"] = 8] = "Tundra";
+    Biome[Biome["AlpineGrassland"] = 9] = "AlpineGrassland";
+    Biome[Biome["AlpineMeadow"] = 10] = "AlpineMeadow";
+    Biome[Biome["AlpineForest"] = 11] = "AlpineForest";
+    Biome[Biome["Taiga"] = 12] = "Taiga";
 })(Biome || (Biome = {}));
 export function getBiomeName(biome) {
     switch (biome) {
@@ -19,18 +25,28 @@ export function getBiomeName(biome) {
             console.error("unhandled biome type:", biome);
         case Biome.Water:
             return "water";
-        case Biome.Beach:
-            return "beach";
-        case Biome.Marshland:
-            return "marshland";
-        case Biome.Grassland:
-            return "grassland";
-        case Biome.Woodland:
-            return "woodland";
-        case Biome.Tundra:
-            return "tundra";
         case Biome.Desert:
             return "desert";
+        case Biome.Grassland:
+            return "grassland";
+        case Biome.Shrubland:
+            return "shrubland";
+        case Biome.MoistForest:
+            return "moist forest";
+        case Biome.WetForest:
+            return "wet forest";
+        case Biome.RainForest:
+            return "rain forest";
+        case Biome.Tundra:
+            return "tundra";
+        case Biome.AlpineGrassland:
+            return "alpine grassland";
+        case Biome.AlpineMeadow:
+            return "alpine meadow";
+        case Biome.AlpineForest:
+            return "alpine forest";
+        case Biome.Taiga:
+            return "taiga";
     }
 }
 function mean(grid) {
@@ -80,25 +96,27 @@ function standardDevWindow(grid, centreX, centreY, offsets) {
     return Math.sqrt(mean(diffsSquared));
 }
 function gaussianBlur(grid, width, depth) {
+    const filterSize = 5;
+    const halfSize = Math.floor(filterSize / 2);
     const offsets = [-2, -1, 0, 1, 2];
     const distancesSquared = [4, 1, 0, 1, 4];
     let result = new Array();
-    for (let y = 0; y < 2; y++) {
+    for (let y = 0; y < halfSize; y++) {
         result[y] = grid[y];
     }
-    for (let y = depth - 2; y < depth; y++) {
+    for (let y = depth - halfSize; y < depth; y++) {
         result[y] = grid[y];
     }
-    let filter = new Float32Array(5);
-    for (let y = 2; y < depth - 2; y++) {
+    let filter = new Float32Array(filterSize);
+    for (let y = halfSize; y < depth - halfSize; y++) {
         result[y] = new Float32Array(width);
-        for (let x = 0; x < 2; x++) {
+        for (let x = 0; x < halfSize; x++) {
             result[y][x] = grid[y][x];
         }
-        for (let x = width - 2; x < width; x++) {
+        for (let x = width - halfSize; x < width; x++) {
             result[y][x] = grid[y][x];
         }
-        for (let x = 2; x < width - 2; x++) {
+        for (let x = halfSize; x < width - halfSize; x++) {
             let sigma = standardDevWindow(grid, x, y, offsets);
             if (sigma == 0) {
                 continue;
@@ -215,7 +233,7 @@ export class TerrainBuilderConfig {
         this._waterLine = 0;
         this._wetLimit = 0;
         this._dryLimit = 0;
-        this._treeLimit = 0;
+        this._uplandThreshold = 0;
         this._hasWater = false;
         this._hasRamps = false;
         this._hasBiomes = false;
@@ -226,20 +244,20 @@ export class TerrainBuilderConfig {
     set waterLine(level) { this._waterLine = level; }
     set wetLimit(level) { this._wetLimit = level; }
     set rainfall(level) { this._rainfall = level; }
+    set uplandThreshold(level) { this._uplandThreshold = level; }
     set rainDirection(direction) { this._rainDirection = direction; }
     set dryLimit(level) { this._dryLimit = level; }
-    set treeLimit(level) { this._treeLimit = level; }
     set hasWater(enable) { this._hasWater = enable; }
     set hasRamps(enable) { this._hasRamps = enable; }
     set hasBiomes(enable) { this._hasBiomes = enable; }
     get numTerraces() { return this._numTerraces; }
+    get uplandThreshold() { return this._uplandThreshold; }
     get hasWater() { return this._hasWater; }
     get floor() { return this._defaultFloor; }
     get wall() { return this._defaultWall; }
     get waterLine() { return this._waterLine; }
     get wetLimit() { return this._wetLimit; }
     get dryLimit() { return this._dryLimit; }
-    get treeLimit() { return this._treeLimit; }
     get ramps() { return this._hasRamps; }
     get biomes() { return this._hasBiomes; }
     get rainfall() { return this._rainfall; }
@@ -495,9 +513,48 @@ export class TerrainBuilder {
                     shapeType = TerrainShape.Wall;
                 }
                 if (isFlat(shapeType) && isEdge(shapeType)) {
-                    if (!Terrain.isSupportedShape(centre.type, shapeType)) {
+                    if (!this.config.biomes) {
                         centre.type = this.config.wall;
-                        shapeType = TerrainShape.Wall;
+                    }
+                    if (!Terrain.isSupportedShape(centre.type, shapeType)) {
+                        switch (shapeType) {
+                            default:
+                                shapeType = TerrainShape.Wall;
+                                break;
+                            case TerrainShape.FlatNorthOut:
+                                if (Terrain.isSupportedShape(centre.type, TerrainShape.FlatNorth)) {
+                                    shapeType = TerrainShape.FlatNorth;
+                                }
+                                else {
+                                    shapeType = TerrainShape.Wall;
+                                }
+                                break;
+                            case TerrainShape.FlatNorthEast:
+                            case TerrainShape.FlatSouthEast:
+                                if (Terrain.isSupportedShape(centre.type, TerrainShape.FlatEast)) {
+                                    shapeType = TerrainShape.FlatEast;
+                                }
+                                else {
+                                    shapeType = TerrainShape.Wall;
+                                }
+                                break;
+                            case TerrainShape.FlatNorthWest:
+                                if (Terrain.isSupportedShape(centre.type, TerrainShape.FlatWestOut)) {
+                                    shapeType = TerrainShape.FlatWestOut;
+                                }
+                                else {
+                                    shapeType = TerrainShape.Wall;
+                                }
+                                break;
+                            case TerrainShape.FlatSouthWest:
+                                if (Terrain.isSupportedShape(centre.type, TerrainShape.FlatWest)) {
+                                    shapeType = TerrainShape.FlatWest;
+                                }
+                                else {
+                                    shapeType = TerrainShape.Wall;
+                                }
+                                break;
+                        }
                     }
                 }
                 if (!isFlat(shapeType) && !Terrain.isSupportedShape(centre.type, shapeType)) {
@@ -528,71 +585,91 @@ export class TerrainBuilder {
         return relativeHeight;
     }
     addRain(towards, water, waterLine) {
-        Rain.init(waterLine, this._surface);
-        for (let x = 0; x < this.surface.width; x++) {
-            let pos = new Point2D(x, this.surface.depth - 1);
-            Rain.add(pos, water, towards);
-        }
-        for (let i = 0; i < Rain.clouds.length; i++) {
-            let cloud = Rain.clouds[i];
-            while (!cloud.update()) { }
-        }
-        let blurredMoisture = gaussianBlur(Rain.moistureGrid, this.surface.width, this.surface.depth);
+        let rain = new Rain(this.surface, waterLine, water, towards);
+        rain.run();
+        let blurred = gaussianBlur(rain.moistureGrid, this.surface.width, this.surface.depth);
         for (let y = 0; y < this.surface.depth; y++) {
             for (let x = 0; x < this.surface.width; x++) {
                 let surface = this.surface.at(x, y);
-                surface.moisture = blurredMoisture[y][x];
+                surface.moisture = blurred[y][x];
             }
         }
     }
     setBiomes() {
-        let numWater = 0;
-        let numSand = 0;
-        let numDryGrass = 0;
-        let numWetGrass = 0;
-        let numRock = 0;
-        let numMud = 0;
+        const moistureRange = 6;
         for (let y = 0; y < this.surface.depth; y++) {
             for (let x = 0; x < this.surface.width; x++) {
                 let surface = this.surface.at(x, y);
                 let biome = Biome.Water;
                 let terrain = TerrainType.Water;
+                let moisturePercent = Math.min(1, surface.moisture / moistureRange);
+                let moistureScaled = Math.floor(5 * moisturePercent);
                 if (surface.height <= this.config.waterLine) {
                     biome = Biome.Water;
                     terrain = TerrainType.Water;
-                    numWater++;
                 }
-                else if (surface.terrace < 1) {
-                    biome = Biome.Beach;
-                    terrain = TerrainType.Sand;
-                    numSand++;
-                }
-                else if (surface.height > this.config.treeLimit) {
-                    if (surface.moisture > this.config.dryLimit) {
-                        biome = Biome.Grassland;
-                        terrain = TerrainType.DryGrass;
-                        numDryGrass++;
+                else if (surface.height >= this.config.uplandThreshold) {
+                    console.log("height, threshold", surface.height, this.config.uplandThreshold);
+                    switch (moistureScaled) {
+                        default:
+                            console.error('unhandled moisture scale');
+                            break;
+                        case 0:
+                            biome = Biome.Rock;
+                            terrain = TerrainType.Upland0;
+                            break;
+                        case 1:
+                            biome = Biome.Tundra;
+                            terrain = TerrainType.Upland1;
+                            break;
+                        case 2:
+                            biome = Biome.AlpineGrassland;
+                            terrain = TerrainType.Upland2;
+                            break;
+                        case 3:
+                            biome = Biome.AlpineMeadow;
+                            terrain = TerrainType.Upland3;
+                            break;
+                        case 4:
+                            biome = Biome.AlpineForest;
+                            terrain = TerrainType.Upland4;
+                            break;
+                        case 5:
+                            biome = Biome.Taiga;
+                            terrain = TerrainType.Upland5;
+                            break;
                     }
-                    else {
-                        biome = Biome.Tundra;
-                        terrain = TerrainType.Rock;
-                        numRock++;
-                    }
-                }
-                else if (surface.moisture < this.config.dryLimit) {
-                    biome = Biome.Desert;
-                    terrain = TerrainType.Rock;
-                    numRock++;
-                }
-                else if (surface.moisture > this.config.wetLimit) {
-                    biome = Biome.Marshland;
-                    terrain = TerrainType.WetGrass;
-                    numWetGrass++;
                 }
                 else {
-                    biome = Biome.Woodland;
-                    terrain = TerrainType.Mud;
-                    numMud++;
+                    switch (moistureScaled) {
+                        default:
+                            console.error('unhandled moisture scale');
+                            break;
+                        case 0:
+                            biome = Biome.Desert;
+                            terrain = TerrainType.Lowland0;
+                            break;
+                        case 1:
+                            biome = Biome.Grassland;
+                            terrain = TerrainType.Lowland1;
+                            break;
+                        case 2:
+                            biome = Biome.Shrubland;
+                            terrain = TerrainType.Lowland2;
+                            break;
+                        case 3:
+                            biome = Biome.MoistForest;
+                            terrain = TerrainType.Lowland3;
+                            break;
+                        case 4:
+                            biome = Biome.WetForest;
+                            terrain = TerrainType.Lowland4;
+                            break;
+                        case 5:
+                            biome = Biome.RainForest;
+                            terrain = TerrainType.Lowland5;
+                            break;
+                    }
                 }
                 if (Terrain.isSupportedType(terrain)) {
                     surface.type = terrain;
@@ -609,41 +686,33 @@ export class TerrainBuilder {
             for (let x = 0; x < this.surface.width; x++) {
                 let surface = this.surface.at(x, y);
                 if (isFlat(surface.shape)) {
-                    if (surface.biome == Biome.Beach) {
-                        let neighbours = this.surface.getNeighbours(surface.x, surface.y);
-                        for (let neighbour of neighbours) {
-                            if (neighbour.biome != Biome.Water) {
-                                continue;
-                            }
-                            switch (getDirectionFromPoints(surface.pos, neighbour.pos)) {
-                                default:
-                                    break;
-                                case Direction.North:
-                                    surface.features |= TerrainFeature.ShorelineNorth;
-                                    break;
-                                case Direction.East:
-                                    surface.features |= TerrainFeature.ShorelineEast;
-                                    break;
-                                case Direction.South:
-                                    surface.features |= TerrainFeature.ShorelineSouth;
-                                    break;
-                                case Direction.West:
-                                    surface.features |= TerrainFeature.ShorelineWest;
-                                    break;
-                            }
+                    let neighbours = this.surface.getNeighbours(surface.x, surface.y);
+                    for (let neighbour of neighbours) {
+                        if (neighbour.biome != Biome.Water) {
+                            continue;
+                        }
+                        switch (getDirectionFromPoints(surface.pos, neighbour.pos)) {
+                            default:
+                                break;
+                            case Direction.North:
+                                surface.features |= TerrainFeature.ShorelineNorth;
+                                break;
+                            case Direction.East:
+                                surface.features |= TerrainFeature.ShorelineEast;
+                                break;
+                            case Direction.South:
+                                surface.features |= TerrainFeature.ShorelineSouth;
+                                break;
+                            case Direction.West:
+                                surface.features |= TerrainFeature.ShorelineWest;
+                                break;
                         }
                     }
-                    else if (surface.biome == Biome.Marshland) {
-                        surface.features |= TerrainFeature.Mud;
-                        surface.features |= TerrainFeature.WetGrass;
-                    }
-                    else if (surface.biome == Biome.Grassland) {
+                    if (surface.biome == Biome.Grassland) {
                         surface.features |= TerrainFeature.DryGrass;
                     }
                     else if (surface.biome == Biome.Tundra) {
                         surface.features |= TerrainFeature.DryGrass;
-                    }
-                    else if (surface.biome == Biome.Woodland) {
                     }
                 }
             }
