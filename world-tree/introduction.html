@@ -17,58 +17,52 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/javascript.min.js" integrity="sha512-aN2s9TjDSMELiMJg7b24YYNKJxC8nMdL9TzL/t9Yfbiryx1WQCfBgxPQQQYYw6R9b4ehpdQYe2eZCRnvvU972g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>hljs.highlightAll();</script>
   <script type="module">
-     import * as WT from "./demos/lib/world-tree.js";
-     const spriteWidth = 322;
-     const spriteHeight = 270;
-     const sheet = new WT.SpriteSheet("./demos/graphics/png/basic-dungeon");
-     function addGraphic(type, shape, offsetX, offsetY) {
-       WT.Terrain.addGraphic(/*terrainType*/type,
-                              /*terrainShape*/shape,
-                              /*spriteSheet*/sheet,
-                              /*coord.x*/offsetX,
-                              /*coord.y*/offsetY,
-                              /*width*/spriteWidth,
-                              /*height*/spriteHeight);
-     }
-     addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Flat, 0, 0);
-     addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Wall, spriteWidth, 0);
+     import * as WT from "./demos/lib/world-tree.mjs";
 
-     // 5x5 area with a wall around the edge.
-     const cellsX = 5;
-     const cellsY = 5;
-     const numTerraces = 1;
-     let heightMap = [ [ 1, 1, 0, 1, 1 ],
-                       [ 1, 0, 0, 0, 1 ],
-                       [ 1, 0, 0, 0, 1 ],
-                       [ 0, 0, 0, 0, 1 ],
-                       [ 0, 0, 1, 1, 1 ] ];
+     const worldDescriptor = {
+       canvasName: "demoCanvas",
+       projection: "TwoByOneIsometric",
+       numTerraces: 1,
+       heightMap: [ [ 1, 1, 0, 1, 1 ],
+                    [ 1, 0, 0, 0, 1 ],
+                    [ 1, 0, 0, 0, 1 ],
+                    [ 0, 0, 0, 0, 1 ],
+                    [ 0, 0, 1, 1, 1 ]
+                  ],
+       floor: WT.TerrainType.Inside,
+       wall: WT.TerrainType.Inside,
+       terrainSpriteDescriptor: {
+         spriteSheetName: "./demos/graphics/png/basic-dungeon",
+         spriteWidth: 322,
+         spriteHeight: 270,
+         tileRowTypes: [
+           WT.TerrainType.Inside,
+         ],
+         tileColumnShapes: [
+           WT.TerrainShape.Flat,
+           WT.TerrainShape.Wall,
+         ],
+       },
+     };
 
-     window.onload = (event) => {
-       const physicalDims =
-         WT.TwoByOneIsometric.getDimensions(spriteWidth, spriteHeight);
-       const worldDims = new WT.Dimensions(physicalDims.width * cellsX,
-                                           physicalDims.depth * cellsY,
-                                           physicalDims.height * (1 + numTerraces));
-       const config = new WT.TerrainBuilderConfig(numTerraces,
-                                                  WT.TerrainType.Rock,
-                                                  WT.TerrainType.Rock);
-       // Use the height map to construct a terrain.
-       let builder = new WT.TerrainBuilder(cellsX, cellsY, heightMap,
-                                           config, physicalDims);
-       let canvas = document.getElementById("demoCanvas");
-       let context = WT.createContext(canvas, worldDims, WT.Perspective.TwoByOneIsometric);
-       builder.generateMap(context);
-       let camera = new WT.MouseCamera(context.scene, canvas,
-                                       canvas.width, canvas.height);
-    
-       var update = function update() {
+     window.onload = async (event) => {
+       const context = await WT.createWorld(worldDescriptor);
+       const canvas = document.getElementById("demoCanvas");
+       const camera = new WT.MouseCamera(
+         context.scene,
+         canvas,
+         canvas.width,
+         canvas.height,
+       );
+
+       const update = function() {
          if (document.hasFocus()) {
            context.update(camera);
          }
          window.requestAnimationFrame(update);
-       }
+       };
        window.requestAnimationFrame(update);
-     }
+     };
   </script>
   <div style="background-color:#002B36">
     <div class="container">
@@ -82,11 +76,9 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
         <li class="breadcrumb-item active">Intro</li>
-        <li class="breadcrumb-item"><a href="./water.html">Water</a></li>
-        <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
         <li class="breadcrumb-item"><a href="./shapes.html">Shapes</a></li>
+        <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
         <li class="breadcrumb-item"><a href="./actors.html">Actors</a></li>
-        <li class="breadcrumb-item"><a href="./tree-island.html">Trees</a></li>
       </ol>
       </nav>
       <div class="row">
@@ -150,98 +142,63 @@
           Using the two-sprite map as an example, we'll want to add two tile sprites:
           one for the floor and one for the walls. 2D sprites are created by cutting up
           a SpriteSheet into a 2D grid. The engine currently only supports PNG files
-          for the spritesheet. The graphics are then added the WorldTree's Terrain object,
-          specifying the terrain type and shape and where to build the sprite from: which
-          SpriteSheet, where within that file and the 2D dimensions of the image. In this
-          example, our SpriteSheet contains a single row of sprites, so our x-axis offset
-          coordinate is increased, by spriteWidth, while the y-axis stays at zero.<br><br>
+          for the spritesheet and the layout of the sprite sheet is described by our
+          terrainSpriteDescriptor. This object is a part of the worldDescriptor object,
+          which also holds the layout of our little 5x5 world.
           </cb_p>
           <pre><code class="language-javascript">
-// A Javascript module imports from the engine.
-import * as WT from "./demos/lib/world-tree.js";
-// Specify the size, in the number of pixels, of the rectangular sprite. X-axis
-// is width, while height in the y-axis.
-const spriteWidth = 322;
-const spriteHeight = 270;
-// Create a new sprite sheet from the image located at the given location. The
-// '.png' extension will automatically be added.
-const sheet = new WT.SpriteSheet("./demos/graphics/png/basic-dungeon");
-function addGraphic(type, shape, offsetX, offsetY) {
-  WT.Terrain.addGraphic(/*terrainType*/type,
-                        /*terrainShape*/shape,
-                        /*spriteSheet*/sheet,
-                        /*coord.x*/offsetX,
-                        /*coord.y*/offsetY,
-                        /*width*/spriteWidth,
-                        /*height*/spriteHeight);
-  }
-// Create two terrain sprites which will be available to the terrain builder. 
-addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Flat, 0, 0);
-addGraphic(WT.TerrainType.Rock, WT.TerrainShape.Wall, spriteWidth, 0);
-          </code></pre>
-          <cb_p>
-          So now that we have two different sprites the the generator can use, now we can
-          define the map and which tiles will be the floor and which will be walls.<br>
-          </cb_p>
-          <pre><code class="language-javascript">
-// 5x5 area with a wall around the edge.
-const cellsX = 5;
-const cellsY = 5;
-const numTerraces = 1;
-const heightMap = [ [ 1, 1, 1, 1, 1 ],
-                    [ 1, 0, 0, 0, 1 ],
-                    [ 1, 0, 0, 0, 1 ],
-                    [ 1, 0, 0, 0, 1 ],
-                    [ 1, 1, 1, 1, 1 ] ];
-// The 3D dimensions of our a rectangular cuboid sprites in the game world.
-// This is no longer pixels, but the dimensions when reversing the effects
-// of the isometric projection that is used for the sprites.
-const physicalDims =
-  WT.TwoByOneIsometric.getDimensions(spriteWidth, spriteHeight);
-// The total space consumed by everything in our map.
-const worldDims = new WT.Dimensions(physicalDims.width * cellsX,
-                                    physicalDims.depth * cellsY,
-                                    physicalDims.height * (1 + numTerraces));
+import * as WT from "../../../dist/world-tree.mjs";
 
+const worldDescriptor = {
+  canvasName: "demoCanvas",
+  projection: "TwoByOneIsometric",
+  numTerraces: 1,
+  heightMap: [ [ 1, 1, 0, 1, 1 ],
+               [ 1, 0, 0, 0, 1 ],
+               [ 1, 0, 0, 0, 1 ],
+               [ 0, 0, 0, 0, 1 ],
+               [ 0, 0, 1, 1, 1 ],
+             ],
+  floor: WT.TerrainType.Inside,
+  wall: WT.TerrainType.Inside,
+  terrainSpriteDescriptor: {
+    spriteSheetName: "graphics/png/basic-dungeon",
+    spriteWidth: 322,
+    spriteHeight: 270,
+    tileRowTypes: [
+      WT.TerrainType.Inside,
+    ],
+    tileColumnShapes: [
+      WT.TerrainShape.Flat,
+      WT.TerrainShape.Wall,
+    ],
+  },
+};
           </code></pre>
           <cb_p>
-          And now we'e ready to build the world.<br><br>
+          We then pass the worldDescriptor object to the engine and wait for it to
+          finish building the world. We can then add a mouse-click controlled camera
+          and enter the animation loop.
           </cb_p>
           <pre><code class="language-javascript">
-window.onload = (event) => {
-  // The Context is what holds everything. It will also create a scene renderer for
-  // the given perspective.
-  let canvas = document.getElementById("demoCanvas");
-  let context = WT.createContext(canvas, worldDims, WT.Perspective.TwoByOneIsometric);
-  // A TerrainBuilderConfig is used to pass all the parameters to the TerrainBuilder.
-  // The only things are required are: the number of terraces (height levels) that the
-  // height map will be split into, and the default TerrainTypes to be used for the
-  // floor and walls.
-  const config = new WT.TerrainBuilderConfig(numTerraces,
-                                             /*defaultFloor*/WT.TerrainType.Sand,
-                                             /*defaultWall*/WT.TerrainType.Rock);
-  // Use the height map to construct a terrain.
-  let builder = new WT.TerrainBuilder(cellsX, cellsY, heightMap, config, physicalDims);
-  // Generate a much of game entities, that represent the floor and walls, and store
-  // them in the Context.
-  builder.generateMap(context);
-          </code></pre>
-          <cb_p>
-          Finally, we're able to add a renderer and set the loop running.<br><br>
-          </cb_p>
-          <pre><code class="language-javascript">
-// Create a mouse that is controlled by left button clicks.
-let camera = new WT.MouseCamera(context.scene, canvas,
-                                canvas.width, canvas.height);
-// The animation frame callback just needs to call update on the Context with the
-// current camera.
-var update = function update() {
-  if (document.hasFocus()) {
-    context.update(camera);
-  }
+window.onload = async (event) => {
+  const context = await WT.createWorld(worldDescriptor);
+  const canvas = document.getElementById("demoCanvas");
+  const camera = new WT.MouseCamera(
+    context.scene,
+    canvas,
+    canvas.width,
+    canvas.height,
+  );
+
+  const update = function() {
+    if (document.hasFocus()) {
+      context.update(camera);
+    }
+    window.requestAnimationFrame(update);
+  };
   window.requestAnimationFrame(update);
-}
-window.requestAnimationFrame(update);
+};
           </code></pre>
           <cb_p>
           The code is running in the canva below (if your screen is large enough), so use mouse click

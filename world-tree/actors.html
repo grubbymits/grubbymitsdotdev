@@ -32,11 +32,9 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
           <li class="breadcrumb-item"><a href="./introduction.html">Intro</a></li>
-          <li class="breadcrumb-item"><a href="./water.html">Water</a></li>
-          <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
           <li class="breadcrumb-item"><a href="./shapes.html">Shapes</a></li>
+          <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
           <li class="breadcrumb-item active">Actors</li>
-          <li class="breadcrumb-item"><a href="./tree-island.html">Trees</a></li>
         </ol>
         </nav>
       <div class="row">
@@ -56,103 +54,95 @@
           collect these together using a 'DirectionalGraphicComponent'. This is a structure
           which holds sprites for supported directions (the way the sprite is facing) and a
           variable to hold the current direction.<br><br>
-          We setup all this up in a 'Droid' class which extends from Actor. This is important
-          since it means that the components in World Tree that need to know about potential
-          changes, will automatically be updated. Plus it means that the engine will give the
-          Droid an opportunity to update itself, make a move in our example.
-          <br><br>
           </cb_p>
           <pre><code class="language-javascript">
-class Droid extends WT.Actor {
-  static sheet = new WT.SpriteSheet("demos/graphics/png/levitate-droid");
-  static directions = [ WT.Direction.West,
-                        WT.Direction.South,
-                        WT.Direction.East,
-                        WT.Direction.North ];
-  static sprites = new Array();
-  static spriteWidth = 58;
-  static spriteHeight = 107;
-  static dims =
-    WT.TwoByOneIsometric.getDimensions(this.spriteWidth, this.spriteHeight);
-    
-  static initGraphics() {
-    this.staticGraphics = new Map();
-    for (let x in this.directions) {
-      let direction = this.directions[x];
-      let sprite = new WT.Sprite(this.sheet, x * this.spriteWidth, 0,
-                                 this.spriteWidth, this.spriteHeight);
-      let graphic = new WT.StaticGraphicComponent(sprite.id);
-      this.staticGraphics.set(direction, graphic);
+async function createDroid(context, position) {
+  const graphicsDescriptor = {
+    spriteSheetName: "demos/graphics/png/levitate-droid",
+    spriteWidth: 58,
+    spriteHeight: 107,
+    columnDirections: [
+      WT.Direction.West,
+      WT.Direction.South,
+      WT.Direction.East,
+      WT.Direction.North,
+    ],
+    numFrames: 1,
+  };
+  const graphics = await WT.createDirectionalGraphics(graphicsDescriptor, context);
+  const dimensions = WT.TwoByOneIsometric.getDimensions(
+    graphicsDescriptor.spriteWidth, graphicsDescriptor.spriteHeight,
+  );
+  const droid = new WT.Actor(
+    context, position, dimensions, graphics
+  );
+
+  // As the droid changes direction, an event will be triggered, so listen to it
+  // and update the graphical direction to match.
+  droid.addEventListener(
+    WT.EntityEvent.FaceDirection,
+    () => graphics.direction = droid.direction,
+  );
+
+  const moveRandomDirection = () => {
+    let dx = Math.round(Math.random() * 2) - 1;
+    let dy = 0;
+    let dz = 0;
+    // Move along either the x or y axis.
+    // Choose values between: -1, 0, 1
+    if (dx == 0) {
+      dy = Math.round(Math.random() * 2) - 1;
     }
-  }
+    if (dx == 0 && dy == 0) {
+      dy = 1;
+    }
+    const moveVector = new WT.Vector3D(dx, dy, dz);
+    droid.direction = WT.Navigation.getDirectionFromVector(moveVector);
+    droid.action = new WT.MoveDirection(droid, moveVector, context.bounds);
+  };
 
-  constructor(context, position) {
-    super(context, position, Droid.dims);
-    let graphics = new WT.DirectionalGraphicComponent(Droid.staticGraphics);
-    // A method inherited from Actor for initialising the graphics used to
-    // represent it.
-    this.addGraphic(graphics);
+  // Choose another direction when it can't move anymore.
+  droid.addEventListener(WT.EntityEvent.EndMove, moveRandomDirection);
+  // Initialise movement.
+  moveRandomDirection();
 
-    // If anything changes the direction in which the droid faces, update the
-    // directional graphics.
-    this.addEventListener(WT.EntityEvent.FaceDirection, () =>
-      graphics.direction = this.direction
-    );
-
-    // Move along either the x or y axis, choosing values between: -1, 0, 1
-    let moveRandomDirection = () => {
-      let dx = Math.round(Math.random() * 2) - 1;
-      let dy = 0;
-      let dz = 0;
-      if (dx == 0) {
-        dy = Math.round(Math.random() * 2) - 1;
-      }
-      if (dx == 0 && dy == 0) {
-        dy = 1;
-      }
-      // The vector that describes how the droid moves.
-      let moveVector = new WT.Vector3D(dx, dy, dz);
-      // Use the vector to get a rough compass direction of movement. Setting this
-      // will trigger our EntityEvent.FaceDirection handler.
-      this.direction = WT.getDirectionFromVector(moveVector);
-      // Ignore this for now...
-      let maxAngle = new WT.Vector3D(0, 0, 0);
-      // An Actor has an 'Action' member variable that will be performed on each
-      // update of the game loop, until completed or unable to complete.
-      this.action = new WT.MoveDirection(this, moveVector, maxAngle, context.bounds);
-    };
-
-    // Choose another direction when it can't move anymore. The MoveDirection Action
-    // will post this event when it completes.
-    this.addEventListener(WT.EntityEvent.EndMove, moveRandomDirection);
-    // Initialise movement.
-    moveRandomDirection();
-  }
+  return droid;
 }
           </code></pre>
           <cb_p>
           So the code above demostrates all that is needed to get some actors into a
-          world, most of the code is just creating loading Sprites and organising them
-          into GraphicalComponents. Now, the only extra step to take is to make an
-          instance of Droid and place it somewhere in our world and create a camera
-          to follow it.<br>
+          world: setup some graphics, add some event listener logic and then it's core
+          decision logic. Now, the only extra step to take is to place the droid somewhere
+          in our world and create a camera to follow it.<br>
           </cb_p>
           <pre><code class="language-javascript">
-window.onload = (event) => {
-  // Create a Context, canvas and setup the world as usual...
-  // ...
-  // Call the static method to setup graphics to all potential instances of Droid.
-  Droid.initGraphics();
-  // Place the droid in the middle of the map. 
-  let droidPosition = new WT.Point3D(Math.floor(worldDims.width / 2),
-                                     Math.floor(worldDims.depth / 2),
-                                     Math.floor(physicalDims.height + 1));
-  var droid = new Droid(context, droidPosition); 
-  // The TrackerCamera will automatically set the centre of the screen on the given
-  // entity, which means we can always see the Droid as it moves around the world.
-  let camera = new WT.TrackerCamera(context.scene,
-                                    canvas.width, canvas.height,
-                                    droid);
+window.onload = async (event) => {
+  const context = await WT.createWorld(worldDescriptor);
+  const canvas = document.getElementById(worldDescriptor.canvasName);
+
+  // Place the droid in the middle(ish) of the map.
+  const x = 4;
+  const y = 4;
+  // We add 1 to the height location, so the droid is slightly on top of the
+  // terrain.
+  const droidPosition =
+    context.grid.getSurfaceLocationAt(x, y).add(new WT.Vector3D(0, 0, 1));
+  const droid = await createDroid(context, droidPosition);
+  // The TrackerCamera will centre the view of whatever entity it is passed.
+  const camera = new WT.TrackerCamera(
+    context.scene,
+    canvas.width,
+    canvas.height,
+    droid,
+  );
+  const update = function() {
+    if (document.hasFocus()) {
+      context.update(camera);
+    }
+    window.requestAnimationFrame(update);
+  };
+  window.requestAnimationFrame(update);
+};
           </code></pre>
           <cb_p>
           The code is running in the canva below (if your screen is big enough).<br><br>

@@ -32,76 +32,78 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
           <li class="breadcrumb-item"><a href="./introduction.html">Intro</a></li>
-          <li class="breadcrumb-item"><a href="./water.html">Water</a></li>
-          <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
           <li class="breadcrumb-item active">Shapes</li>
+          <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
           <li class="breadcrumb-item"><a href="./actors.html">Actors</a></li>
-          <li class="breadcrumb-item"><a href="./tree-island.html">Trees</a></li>
         </ol>
         </nav>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
           <cb_h1>Terrain Shapes<br><br></cb_h1>
           <cb_p>
-          We're going to enable several different shapes in our terrain, other than the
-          flat floor and wall tiles that we've added so far. We're going to add four ramps,
-          one for each direction, and we'll also add four more tiles for the 'cliff' edges
-          of the terraces.<br><br>
+          We're going to stick with a single TerrainType, but add all the shapes that the engine
+          supports, including ramps and 'edge' tiles. We're going to use a larger map this time
+          and it's going to be an outside map, so we're using the Lowland0 type: one that would
+          translate to low-level ground that probably a bit moist (more on that in the next section).
+          <br><br>
           </cb_p>
           <pre><code class="language-javascript">
-const spriteWidth = 322;
-const spriteHeight = 270;
-const sheet = new WT.SpriteSheet("demps/graphics/png/outside-terrain-tiles");
-// Our terrain types.
-const tileRows = [
-  WT.TerrainType.Rock,
-  WT.TerrainType.DryGrass,
-  WT.TerrainType.WetGrass,
-  WT.TerrainType.Mud,
-  WT.TerrainType.Sand,
-  WT.TerrainType.Water,
-];
-// All the shapes that we're going to support.
-const tileColumns = [
-  WT.TerrainShape.Flat,
-  WT.TerrainShape.RampUpSouth,
-  WT.TerrainShape.RampUpWest,
-  WT.TerrainShape.RampUpEast,
-  WT.TerrainShape.RampUpNorth,
-  WT.TerrainShape.Wall,
-  WT.TerrainShape.FlatAloneOut,   // Has no connecting terrain.
-  WT.TerrainShape.FlatWestOut,    // Only has terrain to the east.
-  WT.TerrainShape.FlatSouthOut,   // Only has terrain to the north.
-  WT.TerrainShape.FlatSouthWest,  // Only has terrain to the north and east.
-];
+import * as WT from "./demos/lib/world-tree.mjs";
 
-function addGraphic(column, row) {
-  const shape = tileColumns[column];
-  const type = tileRows[row];
-  WT.Terrain.addGraphic(/*terrainType*/type,
-                        /*terrainShape*/shape,
-                        /*spriteSheet*/sheet,
-                        /*coord.x*/spriteWidth * column,
-                        /*coord.y*/spriteHeight * row,
-                        /*width*/spriteWidth,
-                        /*height*/spriteHeight);
-}
-
-for (let row in tileRows) {
-  if (tileRows[row] == WT.TerrainType.Sand || tileRows[row] == WT.TerrainType.Water) {
-    // Only supporting flat water and sand tiles.
-    addGraphic(tileColumns[0], row);
-    continue;
-  }
-  for (let column in tileColumns) {
-    addGraphic(column, row);
-  }
-}
+const worldDescriptor = {
+  canvasName: "demoCanvas",
+  projection: "TwoByOneIsometric",
+  heightMap: [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+    [0, 1, 2, 2, 2, 2, 1, 1, 1, 1, 0],
+    [0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0],
+    [0, 1, 2, 3, 3, 4, 3, 2, 2, 1, 0],
+    [0, 1, 2, 3, 4, 6, 4, 2, 2, 1, 0],
+    [0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0],
+    [0, 1, 2, 3, 3, 2, 2, 2, 2, 1, 0],
+    [0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0],
+    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ],
+  numTerraces: 3,
+  floor: WT.TerrainType.Lowland0,
+  wall: WT.TerrainType.Lowland0,
+  terrainSpriteDescriptor: {
+    spriteWidth: 161,
+    spriteHeight: 125,
+    spriteSheetName: "demos/graphics/png/outside-tiles-muted-161x125",
+    tileRowTypes: [
+      WT.TerrainType.Lowland0,
+    ],
+    tileColumnShapes: [
+      WT.TerrainShape.Flat,
+      WT.TerrainShape.FlatWest,
+      WT.TerrainShape.FlatNorth,
+      WT.TerrainShape.FlatEast,
+      WT.TerrainShape.FlatSouth,
+      WT.TerrainShape.FlatNorthWest,
+      WT.TerrainShape.FlatNorthEast,
+      WT.TerrainShape.FlatSouthEast,
+      WT.TerrainShape.FlatSouthWest,
+      WT.TerrainShape.FlatWestOut,
+      WT.TerrainShape.FlatNorthOut,
+      WT.TerrainShape.FlatEastOut,
+      WT.TerrainShape.FlatSouthOut,
+      WT.TerrainShape.FlatAloneOut,
+      WT.TerrainShape.FlatNorthSouth,
+      WT.TerrainShape.FlatEastWest,
+      WT.TerrainShape.RampUpSouth,
+      WT.TerrainShape.RampUpWest,
+      WT.TerrainShape.RampUpEast,
+      WT.TerrainShape.RampUpNorth,
+    ],
+  },
+};
           </code></pre>
           <cb_p>
-          The TerrainBuilder will automatically add edge tiles into the map if the correct
-          sprites have been provided; however, we need to explicitly specify adding ramp
-          terrain shapes. The location of a ramp is determined by the height map:<br>
+          The TerrainBuilder will automatically add edge and ramp tiles into the map if the correct
+          sprites have been provided. The location of a ramp is determined by the height map:<br>
           - The TerrainBuilder will find a location that is the exact mid-point between two
           terrace heights.<br>
           - It will then attempt to convert the, directly, adjacent tiles into a ramp.<br>
@@ -109,38 +111,9 @@ for (let row in tileRows) {
           lead to flat terrain tile (we don't want ramps to a cliff or into the air!)
           <br><br>
           </cb_p>
-          <pre><code class="language-javascript">
-const cellsX = 11;
-const cellsY = 11;
-const numTerraces = 3;
-let heightMap = [ [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-                  [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
-                  [ 0, 1, 2, 2, 2, 2, 1, 1, 1, 1, 0 ],
-                  [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
-                  [ 0, 1, 2, 3, 3, 4, 3, 2, 2, 1, 0 ],
-                  [ 0, 1, 2, 3, 4, 6, 4, 2, 2, 1, 0 ],
-                  [ 0, 1, 2, 3, 4, 4, 3, 2, 2, 1, 0 ],
-                  [ 0, 1, 2, 3, 3, 2, 2, 2, 2, 1, 0 ],
-                  [ 0, 1, 1, 2, 2, 2, 2, 2, 1, 1, 0 ],
-                  [ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 ],
-                  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ];
-config.hasBiomes = true;
-// Enable ramps
-config.hasRamps = true;
-// How much water each cloud will start with.
-config.rainfall = 30;
-// Simulate rain coming from the south of the map. In the isometric grid view
-// that is used, this is the bottom right side of the screen.
-config.rainDirection = WT.Direction.North;
-config.wetLimit = 1;
-config.dryLimit = 0.2;
-// The height at which the generator won't place trees.
-config.treeLimit = 4;
-          </code></pre>
           <cb_p>
-          Our island with biomes and shoreline now has more detail in the cliff edges and ramps
-          join up the terraces.
-          The code is running
+          Our map now has more considerably more detail in the cliff edges and ramps join up the
+          terraces. The code is running
           in the canva below (if your screen is big enough), so use mouse click to move
           the camera around.<br><br>
           </cb_p>
