@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="favicon-64x64.png" sizes="64x64">
 <link rel="icon" type="image/png" href="favicon-128x128.png" sizes="128x128">
-<title>World Tree Actors</title>
+<title>World Tree Pathfinding</title>
 </head>
 <body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js" integrity="sha512-W7EehcwtSbRF63FIQlXEOOd5mnq0Et0V0nUOvwcUvjnCKgOLLYbqriQxEQSp63sfrkryxIg/A/O8v8O18QwQCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -19,13 +19,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js" integrity="sha512-W7EehcwtSbRF63FIQlXEOOd5mnq0Et0V0nUOvwcUvjnCKgOLLYbqriQxEQSp63sfrkryxIg/A/O8v8O18QwQCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/languages/javascript.min.js" integrity="sha512-aN2s9TjDSMELiMJg7b24YYNKJxC8nMdL9TzL/t9Yfbiryx1WQCfBgxPQQQYYw6R9b4ehpdQYe2eZCRnvvU972g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>hljs.highlightAll();</script>
-  <script type="module" src="./demos/src/actor.js"></script>
+  <script type="module" src="./demos/src/pathfinding.js"></script>
   <div style="background-color:#002B36">
     <div class="container">
     <div width="100%" background-position="center"></div>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <img class="img-fluid" src="../assets/images/cali-sea-anemone.jpeg" alt="anemones">
+          <img class="img-fluid" src="../assets/images/mull.jpeg" alt="island coast">
         </div>
       </div>
       <nav aria-label="breadcrumb">
@@ -34,27 +34,21 @@
           <li class="breadcrumb-item"><a href="./introduction.html">Intro</a></li>
           <li class="breadcrumb-item"><a href="./shapes.html">Shapes</a></li>
           <li class="breadcrumb-item"><a href="./biomes.html">Biomes</a></li>
-          <li class="breadcrumb-item active">Actors</li>
-          <li class="breadcrumb-item"><a href="./pathfinding.html">Pathfinding</a></li>
+          <li class="breadcrumb-item"><a href="./actors.html">Actors</a></li>
+          <li class="breadcrumb-item active">Pathfinding</li>
         </ol>
         </nav>
       <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <cb_h1>Actors<br><br></cb_h1>
+          <cb_h1>Pathfinding<br><br></cb_h1>
           <cb_p>
-          Actors are how we add entities into the world that can perform actions, which means
-          that for each iteration of the game loop it is offered the chance to update itself.
-          This is different, of course, to the terrain which the world is made from. This
-          tutorial will cover adding an Actor into a world and enabling it to move around.
+          In the Actor example, we assigned some logic to a robot so it would continually
+          move, changing direction when it bumped into a wall. This example is more simple
+          because we don't have to create any logic for the robot, instead we will control
+          the robots movement with a mouse click / screen touch. Our WorldDescriptor is the
+          same as before, so we won't repeat it here, but the createDroid function is more
+          simple.
           <br><br>
-          </cb_p>
-          <cb_h2>Movement<br></cb_h2>
-          <cb_p>
-          We could just add a single sprite to represent our actor, a robot of sorts, but we're
-          going to add a sprite for each of the directions that it can face, four, and we'll
-          collect these together using a 'DirectionalGraphicComponent'. This is a structure
-          which holds sprites for supported directions (the way the sprite is facing) and a
-          variable to hold the current direction.<br><br>
           </cb_p>
           <pre><code class="language-javascript">
 async function createDroid(context, position) {
@@ -78,43 +72,16 @@ async function createDroid(context, position) {
     context, position, dimensions, graphics
   );
 
-  // As the droid changes direction, an event will be triggered, so listen to it
-  // and update the graphical direction to match.
   droid.addEventListener(
     WT.EntityEvent.FaceDirection,
     () => graphics.direction = droid.direction,
   );
 
-  const moveRandomDirection = () => {
-    let dx = Math.round(Math.random() * 2) - 1;
-    let dy = 0;
-    let dz = 0;
-    // Move along either the x or y axis.
-    // Choose values between: -1, 0, 1
-    if (dx == 0) {
-      dy = Math.round(Math.random() * 2) - 1;
-    }
-    if (dx == 0 && dy == 0) {
-      dy = 1;
-    }
-    const moveVector = new WT.Vector3D(dx, dy, dz);
-    droid.direction = WT.Navigation.getDirectionFromVector(moveVector);
-    droid.action = new WT.MoveDirection(droid, moveVector, context.bounds);
-  };
-
-  // Choose another direction when it can't move anymore.
-  droid.addEventListener(WT.EntityEvent.EndMove, moveRandomDirection);
-  // Initialise movement.
-  moveRandomDirection();
-
   return droid;
 }
           </code></pre>
           <cb_p>
-          So the code above demostrates all that is needed to get some actors into a
-          world: setup some graphics, add some event listener logic and then it's core
-          decision logic. Now, the only extra step to take is to place the droid somewhere
-          in our world and create a camera to follow it.<br>
+          To give the player control of the droid, we just have to add a call to TouchOrClickNav.
           </cb_p>
           <pre><code class="language-javascript">
 window.onload = async (event) => {
@@ -124,18 +91,18 @@ window.onload = async (event) => {
   // Place the droid in the middle(ish) of the map.
   const x = 4;
   const y = 4;
-  // We add 1 to the height location, so the droid is slightly on top of the
-  // terrain.
   const droidPosition =
     context.grid.getSurfaceLocationAt(x, y).add(new WT.Vector3D(0, 0, 1));
   const droid = await createDroid(context, droidPosition);
-  // The TrackerCamera will centre the view of whatever entity it is passed.
   const camera = new WT.TrackerCamera(
     context.scene,
     canvas.width,
     canvas.height,
     droid,
   );
+  // This will setup event listeners on 'mousedown' and 'touchstart' to run the a-star
+  // pathfinding code and setup the droid to move there, if possible. 
+  WT.TouchOrClickNav(context, canvas, camera, droid, 1);
   const update = function() {
     if (document.hasFocus()) {
       context.update(camera);
